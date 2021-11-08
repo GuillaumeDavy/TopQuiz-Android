@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TopQuiz</string>
+    <string name="welcome_label">Bienvenue dans TopQuizz. Quel est ton nom ?</string>
+    <string name="welcome_back_label">Te revoila</string>
+    <string name="welcome_back_label_score">Ton score précédant était</string>
+    <string name="name_label">Entre ton nom</string>
+    <string name="lets_play">Jouons !</string>
+    <string name="score_content_label">Ton score est de </string>
+    <string name="score_title_label">Bravo !</string>
+    <string name="score_button_label">OK</string>
+    <string name="question1">Qui est le créateur d\'Android?</string>
+    <string name="response11">Andy Rubin</string>
+    <string name="response12">Steve Wozniak</string>
+    <string name="response13">Jake Wharton</string>
+    <string name="response14">Paul Smith</string>
+    <string name="question2">Quand le premier homme a atterit sur la Lune?</string>
+    <string name="response21">1958</string>
+    <string name="response22">1962</string>
+    <string name="response23">1967</string>
+    <string name="response24">1969</string>
+    <string name="question3">Quel est le numéro de la maison des Simpsons?</string>
+    <string name="response31">42</string>
+    <string name="response32">101</string>
+    <string name="response33">666</string>
+    <string name="response34">742</string>
+    <string name="question4">Le suffrage universel pour l\'élection du Président de la République date de?</string>
+    <string name="response41">1832</string>
+    <string name="response42">1958</string>
+    <string name="response43">1962</string>
+    <string name="response44">1998</string>
+    <string name="question5">Quand a été créée l\'ONU ?</string>
+    <string name="response51">1914</string>
+    <string name="response52">1939</string>
+    <string name="response53">1945</string>
+    <string name="response54">1951</string>
+    <string name="question6">Combien de fois la France a-t-elle organisé les Jeux Olympiques d\'hiver?</string>
+    <string name="response61">2</string>
+    <string name="response62">3</string>
+    <string name="response63">4</string>
+    <string name="response64">5</string>
+
+
+
+</resources>
