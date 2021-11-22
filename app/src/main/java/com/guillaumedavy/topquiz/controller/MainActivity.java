@@ -106,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Affiche le nom du joueur et son dernier score
+     * @param name : le nom du joueur
+     * @param score : son dernier score
+     */
     private void displayNameAndScore(String name, int score){
         if(name != null){
             String text = getString(R.string.welcome_back_label) + " " + name + "\n" + getString(R.string.welcome_back_label_score) + " " + score;

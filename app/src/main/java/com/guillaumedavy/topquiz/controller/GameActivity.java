@@ -20,12 +20,14 @@ import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
-
+    public static final int NUMBER_OF_QUESTIONS = 4;
     public static final String BUNDLE_EXTRA_SCORE = "BUNDLE_EXTRA_SCORE";
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
-    public static final String BUNDLE_STATE_QUESTION = "BUNDLE_STATE_QUESTION";
+    public static final String BUNDLE_STATE_QUESTION_COUNT = "BUNDLE_STATE_QUESTION_COUNT";
+    public static final String BUNDLE_STATE_QUESTION_BANK = "BUNDLE_STATE_QUESTION_BANK";
 
     private TextView mQuestionTextView;
     private Button mResponseOneButton;
@@ -46,10 +48,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
         outState.putInt(BUNDLE_STATE_SCORE, mCurrentScore);
-        outState.putInt(BUNDLE_STATE_QUESTION, mRemainingQuestionCount);
+        outState.putInt(BUNDLE_STATE_QUESTION_COUNT, mRemainingQuestionCount);
+        outState.putParcelable(BUNDLE_STATE_QUESTION_BANK, mQuestionBank);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -57,9 +59,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        //Game initialisation
-        mQuestionBank = generateQuestionBank();
-        mRemainingQuestionCount = 4;
+        if(savedInstanceState != null){
+            mCurrentScore = savedInstanceState.getInt(BUNDLE_STATE_SCORE);
+            mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
+            mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
+            mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
+
+        } else {
+            //Game initialisation
+            mQuestionBank = generateQuestionBank();
+            mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
+            mCurrentScore = 0;
+        }
 
         mQuestionTextView = findViewById(R.id.game_activity_textview_question);
         mResponseOneButton = findViewById(R.id.game_activity_button_1);
@@ -75,14 +86,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mEnableTouchEvents = true;
 
         displayQuestion(mQuestionBank.getCurrentQuestion());
-
-        if(savedInstanceState !=  null){
-            mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION);
-            mCurrentScore = savedInstanceState.getInt(BUNDLE_STATE_SCORE);
-        } else {
-            mRemainingQuestionCount = 4;
-            mCurrentScore = 0;
-        }
     }
 
     @Override
@@ -130,6 +133,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mResponseFourButton.setText(question.getChoiceList().get(3));
     }
 
+    /**
+     * Affichage de fin de jeu et retour vers mainActivity
+     */
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
@@ -144,6 +150,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 .show();
     }
 
+    /**
+     * Permet la génération de questions pour le jeu
+     * @return la banque de questions
+     */
     private QuestionBank generateQuestionBank(){
         Question question1 = new Question(
                 getString(R.string.question1),
