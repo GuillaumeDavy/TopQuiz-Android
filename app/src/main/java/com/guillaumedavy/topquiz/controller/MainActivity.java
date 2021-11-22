@@ -17,7 +17,6 @@ import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.User;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private static final String SHARED_PREF_USER_INFO = "SHARED_PREF_USER_INFO";
     private static final String SHARED_PREF_USER_INFO_NAME = "SHARED_PREF_USER_INFO_NAME";
@@ -76,16 +75,15 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                //Mémorise le nom
+                //Mémorise le nom et met le score par defaut
                 mUser.setFirstname(mNameEditText.getText().toString());
-                //Sauvegarde le nom de l'utilisateur
-                getSharedPreferences(SHARED_PREF_USER_INFO, MODE_PRIVATE)
-                        .edit()
-                        .putString(SHARED_PREF_USER_INFO_NAME, mUser.getFirstname())
-                        .apply();
-                //Elle communique avec l'OS android en lui demandant de démarrer une activité
-                //Ici, elle créée une instance de la gameactivity
-                startActivityForResult(new Intent(MainActivity.this, GameActivity.class), GAME_ACTIVITY_REQUEST_CODE);
+                //Creer un Intent pour passer le joueur au game activity
+                Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
+                System.out.println(mUser);
+                gameActivity.putExtra(GameActivity.USER, mUser);
+                User user = gameActivity.getParcelableExtra(GameActivity.USER);
+                System.out.println("Main " + user);
+                startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
     }
@@ -95,13 +93,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Fetch the score from the Intent
-            getSharedPreferences(SHARED_PREF_USER_INFO, MODE_PRIVATE)
-                    .edit()
-                    .putInt(SHARED_PREF_USER_INFO_SCORE, data.getIntExtra(GameActivity.BUNDLE_EXTRA_SCORE, 0))
-                    .apply();
+            mUser = data.getParcelableExtra(GameActivity.USER);
+            System.out.println(mUser.toString());
             displayNameAndScore(
                     mUser.getFirstname(),
-                    data.getIntExtra(GameActivity.BUNDLE_EXTRA_SCORE, 0)
+                    mUser.getScore()
             );
         }
     }

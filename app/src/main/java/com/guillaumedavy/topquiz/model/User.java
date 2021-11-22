@@ -30,6 +30,7 @@ public class User implements Parcelable {
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {
+            System.out.println("Creator -> firstname : " + in.readString() + " score : " + in.readInt());
             return new User(in);
         }
 
@@ -94,7 +95,16 @@ public class User implements Parcelable {
      * @param in : un Parcel
      */
     private User(Parcel in) {
+        System.out.println("To User -> firstname : " + in.readString() + " score : " + in.readInt());
         mFirstname = in.readString();
         mScore = in.readInt();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "mFirstname='" + mFirstname + '\'' +
+                ", mScore=" + mScore +
+                '}';
     }
 }

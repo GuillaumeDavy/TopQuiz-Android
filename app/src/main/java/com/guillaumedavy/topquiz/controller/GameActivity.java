@@ -18,13 +18,14 @@ import android.widget.Toast;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
+import com.guillaumedavy.topquiz.model.User;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final String USER = "USER";
     public static final int NUMBER_OF_QUESTIONS = 4;
-    public static final String BUNDLE_EXTRA_SCORE = "BUNDLE_EXTRA_SCORE";
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
     public static final String BUNDLE_STATE_QUESTION_COUNT = "BUNDLE_STATE_QUESTION_COUNT";
     public static final String BUNDLE_STATE_QUESTION_BANK = "BUNDLE_STATE_QUESTION_BANK";
@@ -38,8 +39,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     //Game attributs
     private QuestionBank mQuestionBank;
     private int mRemainingQuestionCount;
-    private int mCurrentScore = 0;
     private boolean mEnableTouchEvents;
+    private User mUser;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -48,7 +49,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(BUNDLE_STATE_SCORE, mCurrentScore);
+        outState.putInt(BUNDLE_STATE_SCORE, mUser.getScore());
         outState.putInt(BUNDLE_STATE_QUESTION_COUNT, mRemainingQuestionCount);
         outState.putParcelable(BUNDLE_STATE_QUESTION_BANK, mQuestionBank);
         super.onSaveInstanceState(outState);
@@ -59,18 +60,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        Intent intent = getIntent();
+        if(intent.hasExtra(USER)){
+            System.out.println("OK");
+            mUser = intent.getParcelableExtra(USER);
+            System.out.println("Gane " + mUser);
+        }
+
         if(savedInstanceState != null){
-            mCurrentScore = savedInstanceState.getInt(BUNDLE_STATE_SCORE);
+            mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
             mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
             mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
             mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
-
         } else {
             //Game initialisation
             mQuestionBank = generateQuestionBank();
             mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
-            mCurrentScore = 0;
         }
+
+        System.out.println(mUser);
 
         mQuestionTextView = findViewById(R.id.game_activity_textview_question);
         mResponseOneButton = findViewById(R.id.game_activity_button_1);
@@ -102,7 +110,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(index == mQuestionBank.getCurrentQuestion().getAnswerIndex()){
             Toast.makeText(this, "Correct", Toast.LENGTH_SHORT).show();
             //Ajoute un point au score du joueur
-            mCurrentScore++;
+            mUser.incrementScoreByOne();
         } else {
             Toast.makeText(this, "Incorrect", Toast.LENGTH_SHORT).show();
         }
@@ -139,10 +147,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
-                .setMessage(getString(R.string.score_content_label) + " " + mCurrentScore)
+                .setMessage(getString(R.string.score_content_label) + " " + mUser.getScore())
                 .setPositiveButton(getString(R.string.score_button_label), (dialog, which) -> {
                     Intent intent = new Intent();
-                    intent.putExtra(BUNDLE_EXTRA_SCORE, mCurrentScore);
+                    intent.putExtra(USER, mUser);
                     setResult(RESULT_OK, intent);
                     finish();
                 })
