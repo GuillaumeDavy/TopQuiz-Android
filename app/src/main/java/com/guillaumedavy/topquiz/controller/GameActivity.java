@@ -14,12 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
-import com.guillaumedavy.topquiz.model.Category;
+import com.guillaumedavy.topquiz.model.DatabaseHelper.TopQuizDBHelper;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
@@ -161,80 +161,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return la banque de questions
      */
     private QuestionBank generateQuestionBank(){
-        Category cultureGenerale = new Category(1, getString(R.string.categorie1));
-        Question question1 = new Question(
-                1,
-                cultureGenerale,
-                getString(R.string.question1),
-                getString(R.string.response11),
-                getString(R.string.response12),
-                getString(R.string.response13),
-                getString(R.string.response14),
-                0
-        );
+        //Database
+        System.out.println("Create question helper");
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        db.getWritableDatabase();
+        System.out.println("question helper just created");
+        db.createDefaultQuestionsIfNeed();
+        List<Question> questions = db.getAllQuestions();
 
-        Question question2 = new Question(
-                2,
-                cultureGenerale,
-                getString(R.string.question2),
-                getString(R.string.response21),
-                getString(R.string.response22),
-                getString(R.string.response23),
-                getString(R.string.response24),
-                3
-        );
-
-        Question question3 = new Question(
-                3,
-                cultureGenerale,
-                getString(R.string.question3),
-                getString(R.string.response31),
-                getString(R.string.response32),
-                getString(R.string.response33),
-                getString(R.string.response34),
-                3
-        );
-
-        Question question4 = new Question(
-                4,
-                cultureGenerale,
-                getString(R.string.question4),
-                getString(R.string.response41),
-                getString(R.string.response42),
-                getString(R.string.response43),
-                getString(R.string.response44),
-                2
-        );
-
-        Question question5 = new Question(
-                5,
-                cultureGenerale,
-                getString(R.string.question5),
-                getString(R.string.response51),
-                getString(R.string.response52),
-                getString(R.string.response53),
-                getString(R.string.response54),
-                2
-        );
-
-        Question question6 = new Question(
-                6,
-                cultureGenerale,
-                getString(R.string.question6),
-                getString(R.string.response61),
-                getString(R.string.response62),
-                getString(R.string.response63),
-                getString(R.string.response64),
-                1
-        );
-
-        return new QuestionBank(Arrays.asList(
-                question1,
-                question2,
-                question3,
-                question4,
-                question5,
-                question6
-        ));
+        for (int i = 0; i < questions.size(); i++){
+            System.out.println(questions.get(i));
+        }
+        return new QuestionBank(questions);
     }
 }

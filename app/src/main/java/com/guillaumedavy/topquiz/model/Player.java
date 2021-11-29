@@ -95,4 +95,12 @@ public class Player implements Parcelable {
         mUserEmail = in.readString();
         mScore = in.readInt();
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "mUserEmail='" + mUserEmail + '\'' +
+                ", mScore=" + mScore +
+                '}';
+    }
 }

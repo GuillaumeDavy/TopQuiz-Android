@@ -81,4 +81,12 @@ public class QuestionBank implements Parcelable {
         in.readList(mQuestionList, Question.class.getClassLoader());
         mCurrentQuestionIndex = in.readInt();
     }
+
+    @Override
+    public String toString() {
+        return "QuestionBank{" +
+                "mQuestionList=" + mQuestionList +
+                ", mCurrentQuestionIndex=" + mCurrentQuestionIndex +
+                '}';
+    }
 }

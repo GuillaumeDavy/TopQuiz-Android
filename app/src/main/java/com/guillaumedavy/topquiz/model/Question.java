@@ -65,4 +65,18 @@ public class Question implements Serializable {
     public int getAnswerIndex() {
         return mAnswerIndex;
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "mId=" + mId +
+                ", mCategory=" + mCategory +
+                ", mQuestion='" + mQuestion + '\'' +
+                ", mAnswer1='" + mAnswer1 + '\'' +
+                ", mAnswer2='" + mAnswer2 + '\'' +
+                ", mAnswer3='" + mAnswer3 + '\'' +
+                ", mAnswer4='" + mAnswer4 + '\'' +
+                ", mAnswerIndex=" + mAnswerIndex +
+                '}';
+    }
 }

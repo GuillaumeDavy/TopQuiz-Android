@@ -1,4 +1,4 @@
-package com.guillaumedavy.topquiz.DatabaseHelper;
+package com.guillaumedavy.topquiz.model.DatabaseHelper;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.guillaumedavy.topquiz.App;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Question;
@@ -13,9 +14,9 @@ import com.guillaumedavy.topquiz.model.Question;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionHelper extends SQLiteOpenHelper {
+public class TopQuizDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "TOPQUIZ_DATABASE";
     private static final String TABLE_QUESTION = "QUESTION";
     private static final String COLUMN_QUESTION_ID ="id";
@@ -25,9 +26,9 @@ public class QuestionHelper extends SQLiteOpenHelper {
     private static final String COLUMN_QUESTION_ANSWER2 ="answer_2";
     private static final String COLUMN_QUESTION_ANSWER3 ="answer_3";
     private static final String COLUMN_QUESTION_ANSWER4 ="answer_4";
-    private static final String COLUMN_QUESTION_ANSWERNUMBER = "answernumber";
+    private static final String COLUMN_QUESTION_ANSWERNUMBER = "answer_number";
 
-    public QuestionHelper(Context context)  {
+    public TopQuizDBHelper(Context context)  {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -36,13 +37,13 @@ public class QuestionHelper extends SQLiteOpenHelper {
         // Script to create question table.
         String scriptQuestionTable = "CREATE TABLE " + TABLE_QUESTION + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"    // 0
-                + COLUMN_QUESTION_CATEGORY_ID + "INTEGER"                       // 1
-                + COLUMN_QUESTION_VALUE + " TEXT"                               // 2
-                + COLUMN_QUESTION_ANSWER1 + "TEXT"                              // 3
-                + COLUMN_QUESTION_ANSWER2 + "TEXT"                              // 4
-                + COLUMN_QUESTION_ANSWER3 + "TEXT"                              // 5
-                + COLUMN_QUESTION_ANSWER4 + "TEXT"                              // 6
-                + COLUMN_QUESTION_ANSWERNUMBER + "INTEGER"                      // 7
+                + COLUMN_QUESTION_CATEGORY_ID + " INTEGER, "                       // 1
+                + COLUMN_QUESTION_VALUE + " TEXT, "                               // 2
+                + COLUMN_QUESTION_ANSWER1 + " TEXT, "                              // 3
+                + COLUMN_QUESTION_ANSWER2 + " TEXT, "                              // 4
+                + COLUMN_QUESTION_ANSWER3 + " TEXT, "                              // 5
+                + COLUMN_QUESTION_ANSWER4 + " TEXT, "                              // 6
+                + COLUMN_QUESTION_ANSWERNUMBER + " INTEGER"                      // 7
                 + ")";
 
         //Execute script
@@ -101,11 +102,11 @@ public class QuestionHelper extends SQLiteOpenHelper {
                 Question question = new Question(
                         cursor.getLong(0),      //ID
                         new Category(cursor.getInt(1), "Categorie Name"), //TODO appeler SQL de categorie
-                        cursor.getString(3),    //QUESTION
-                        cursor.getString(4),    //ANSWER 1
-                        cursor.getString(5),    //ANSWER 2
-                        cursor.getString(6),    //ANSWER 3
-                        cursor.getString(7),    //ANSWER 1
+                        cursor.getString(2),    //QUESTION
+                        cursor.getString(3),    //ANSWER 1
+                        cursor.getString(4),    //ANSWER 2
+                        cursor.getString(5),    //ANSWER 3
+                        cursor.getString(6),    //ANSWER 1
                         cursor.getInt(7)        //CORRECT ANSWER
                 );
 
@@ -120,74 +121,81 @@ public class QuestionHelper extends SQLiteOpenHelper {
 
     // If question table has no data
     // default, Insert 2 records.
-    public void createDefaultNotesIfNeed()  {
+    public void createDefaultQuestionsIfNeed()  {
         if(this.getQuestionsCount() == 0) {
-            Category cultureGenerale = new Category(1, getString(R.string.categorie1));
+            Category cultureGenerale = new Category(1, App.getContext().getResources().getString(R.string.categorie1));
             Question question1 = new Question(
                     1,
                     cultureGenerale,
-                    getString(R.string.question1),
-                    getString(R.string.response11),
-                    getString(R.string.response12),
-                    getString(R.string.response13),
-                    getString(R.string.response14),
+                    App.getContext().getResources().getString(R.string.question1),
+                    App.getContext().getResources().getString(R.string.response11),
+                    App.getContext().getResources().getString(R.string.response12),
+                    App.getContext().getResources().getString(R.string.response13),
+                    App.getContext().getResources().getString(R.string.response14),
                     0
             );
 
             Question question2 = new Question(
                     2,
                     cultureGenerale,
-                    getString(R.string.question2),
-                    getString(R.string.response21),
-                    getString(R.string.response22),
-                    getString(R.string.response23),
-                    getString(R.string.response24),
+                    App.getContext().getResources().getString(R.string.question2),
+                    App.getContext().getResources().getString(R.string.response21),
+                    App.getContext().getResources().getString(R.string.response22),
+                    App.getContext().getResources().getString(R.string.response23),
+                    App.getContext().getResources().getString(R.string.response24),
                     3
             );
 
             Question question3 = new Question(
                     3,
                     cultureGenerale,
-                    getString(R.string.question3),
-                    getString(R.string.response31),
-                    getString(R.string.response32),
-                    getString(R.string.response33),
-                    getString(R.string.response34),
+                    App.getContext().getResources().getString(R.string.question3),
+                    App.getContext().getResources().getString(R.string.response31),
+                    App.getContext().getResources().getString(R.string.response32),
+                    App.getContext().getResources().getString(R.string.response33),
+                    App.getContext().getResources().getString(R.string.response34),
                     3
             );
 
             Question question4 = new Question(
                     4,
                     cultureGenerale,
-                    getString(R.string.question4),
-                    getString(R.string.response41),
-                    getString(R.string.response42),
-                    getString(R.string.response43),
-                    getString(R.string.response44),
+                    App.getContext().getResources().getString(R.string.question4),
+                    App.getContext().getResources().getString(R.string.response41),
+                    App.getContext().getResources().getString(R.string.response42),
+                    App.getContext().getResources().getString(R.string.response43),
+                    App.getContext().getResources().getString(R.string.response44),
                     2
             );
 
             Question question5 = new Question(
                     5,
                     cultureGenerale,
-                    getString(R.string.question5),
-                    getString(R.string.response51),
-                    getString(R.string.response52),
-                    getString(R.string.response53),
-                    getString(R.string.response54),
+                    App.getContext().getResources().getString(R.string.question5),
+                    App.getContext().getResources().getString(R.string.response51),
+                    App.getContext().getResources().getString(R.string.response52),
+                    App.getContext().getResources().getString(R.string.response53),
+                    App.getContext().getResources().getString(R.string.response54),
                     2
             );
 
             Question question6 = new Question(
                     6,
                     cultureGenerale,
-                    getString(R.string.question6),
-                    getString(R.string.response61),
-                    getString(R.string.response62),
-                    getString(R.string.response63),
-                    getString(R.string.response64),
+                    App.getContext().getResources().getString(R.string.question6),
+                    App.getContext().getResources().getString(R.string.response61),
+                    App.getContext().getResources().getString(R.string.response62),
+                    App.getContext().getResources().getString(R.string.response63),
+                    App.getContext().getResources().getString(R.string.response64),
                     1
             );
+
+            this.addQuestion(question1);
+            this.addQuestion(question2);
+            this.addQuestion(question3);
+            this.addQuestion(question4);
+            this.addQuestion(question5);
+            this.addQuestion(question6);
         }
     }
 
