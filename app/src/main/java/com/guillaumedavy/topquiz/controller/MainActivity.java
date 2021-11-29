@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
                 System.out.println(mUser);
                 gameActivity.putExtra(GameActivity.USER, mUser);
-                User user = gameActivity.getParcelableExtra(GameActivity.USER);
-                System.out.println("Main " + user);
                 startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
