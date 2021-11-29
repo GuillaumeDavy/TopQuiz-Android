@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TopQuiz</string>
-    <string name="welcome_label">Bienvenue dans TopQuizz. Quel est ton nom ?</string>
     <string name="welcome_back_label">Te revoila</string>
+    <string name="lets_play">Jouer</string>
     <string name="welcome_back_label_score">Ton score précédant était</string>
-    <string name="name_label">Entre ton nom</string>
-    <string name="lets_play">Jouons !</string>
     <string name="score_content_label">Ton score est de </string>
     <string name="score_title_label">Bravo !</string>
     <string name="score_button_label">OK</string>
@@ -39,7 +37,28 @@
     <string name="response62">3</string>
     <string name="response63">4</string>
     <string name="response64">5</string>
-
-
+    <!-- ##################### - LOGIN - ############################# -->
+    <string name="welcome_label">Bienvenu dans TopQuiz. Connecte toi pour jouer !</string>
+    <string name="name_label">Email</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="login">Se connecter</string>
+    <!-- ################ - ACCOUNT CREATION - ####################### -->
+    <string name="create_account">Crée ton nouveau compte</string>
+    <string name="password">mot de passe</string>
+    <string name="username">pseudo</string>
+    <string name="create_account_button">Créer</string>
+    <!-- ################ - SELECT CATEGORY  - ####################### -->
+    <string name="select_category">Choisi une catégorie</string>
+    <string name="add_question">Ajouter une question</string>
+    <!-- ################ - ADD A QUESTION   - ####################### -->
+    <string name="new_question">Nouvelle question</string>
+    <string name="answers">Réponses</string>
+    <string name="new_answer_1">Réponse 1</string>
+    <string name="new_answer_2">Réponse 2</string>
+    <string name="new_answer_3">Réponse 3</string>
+    <string name="new_answer_4">Réponse 4</string>
+    <string name="choose_good_answer">Choisi la bonne réponse</string>
+    <string name="validate_question">Ajout de la question</string>
+    <string name="choosed_category">Cat. choisie</string>
 
 </resources>
