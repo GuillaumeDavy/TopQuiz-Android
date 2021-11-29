@@ -39,7 +39,10 @@
     <string name="response62">3</string>
     <string name="response63">4</string>
     <string name="response64">5</string>
-
-
+    <!-- ################ - ACCOUNT CREATION - ####################### -->
+    <string name="create_account">Crée ton nouveau compte</string>
+    <string name="password">mot de passe</string>
+    <string name="username">pseudo</string>
+    <string name="create_account_button">Créer</string>
 
 </resources>
