@@ -162,16 +162,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     private QuestionBank generateQuestionBank(){
         //Database
-        System.out.println("Create question helper");
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        System.out.println("question helper just created");
         db.createDefaultQuestionsIfNeed();
-        List<Question> questions = db.getAllQuestions();
-
-        for (int i = 0; i < questions.size(); i++){
-            System.out.println(questions.get(i));
-        }
-        return new QuestionBank(questions);
+        return new QuestionBank(db.getAllQuestions());
     }
 }
