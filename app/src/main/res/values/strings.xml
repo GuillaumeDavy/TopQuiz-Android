@@ -45,7 +45,7 @@
     <!-- ################ - ACCOUNT CREATION - ####################### -->
     <string name="create_account">Create your account</string>
     <string name="password">password</string>
-    <string name="username">username</string>
+    <string name="username">Email</string>
     <string name="create_account_button">Create</string>
     <!-- ################ - SELECT CATEGORY  - ####################### -->
     <string name="select_category">Select a category</string>

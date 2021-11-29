@@ -45,7 +45,7 @@
     <!-- ################ - ACCOUNT CREATION - ####################### -->
     <string name="create_account">Crée ton nouveau compte</string>
     <string name="password">mot de passe</string>
-    <string name="username">pseudo</string>
+    <string name="username">Email</string>
     <string name="create_account_button">Créer</string>
     <!-- ################ - SELECT CATEGORY  - ####################### -->
     <string name="select_category">Choisi une catégorie</string>
