@@ -62,9 +62,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = getIntent();
         if(intent.hasExtra(USER)){
-            System.out.println("OK");
             mUser = intent.getParcelableExtra(USER);
-            System.out.println("Gane " + mUser);
+            System.out.println("User in game " + mUser);
         }
 
         if(savedInstanceState != null){
@@ -77,8 +76,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             mQuestionBank = generateQuestionBank();
             mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
         }
-
-        System.out.println(mUser);
 
         mQuestionTextView = findViewById(R.id.game_activity_textview_question);
         mResponseOneButton = findViewById(R.id.game_activity_button_1);
