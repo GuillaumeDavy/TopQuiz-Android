@@ -1,58 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textViewCreateAccount"
-        android:layout_width="328dp"
-        android:layout_height="56dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="114dp"
         android:gravity="center"
         android:text="@string/create_account"
-        tools:layout_editor_absoluteX="41dp"
-        tools:layout_editor_absoluteY="16dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextUsernameCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonCreateAccount"
         android:layout_width="152dp"
-        android:layout_height="77dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="216dp"
         android:text="@string/create_account_button"
-        tools:layout_editor_absoluteX="129dp"
-        tools:layout_editor_absoluteY="438dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextConfirmPasswordCreateAccount" />
 
     <EditText
         android:id="@+id/editTextUsernameCreateAccount"
         android:layout_width="228dp"
-        android:layout_height="59dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="22dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/username"
-        tools:layout_editor_absoluteX="91dp"
-        tools:layout_editor_absoluteY="186dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextPasswordCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCreateAccount" />
 
     <EditText
         android:id="@+id/editTextPasswordCreateAccount"
         android:layout_width="228dp"
-        android:layout_height="59dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="91dp"
-        tools:layout_editor_absoluteY="267dp"
         android:text="@string/password"
+        app:layout_constraintBottom_toTopOf="@+id/editTextConfirmPasswordCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameCreateAccount"
         tools:ignore="MissingConstraints" />
 
     <EditText
         android:id="@+id/editTextConfirmPasswordCreateAccount"
         android:layout_width="228dp"
-        android:layout_height="59dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="43dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="91dp"
-        tools:layout_editor_absoluteY="336dp"
         android:text="@string/password"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordCreateAccount"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>
