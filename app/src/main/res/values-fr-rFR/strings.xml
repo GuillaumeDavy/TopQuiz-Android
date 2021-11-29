@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">TopQuiz</string>
     <string name="welcome_back_label">Te revoila</string>
+    <string name="lets_play">Jouer</string>
     <string name="welcome_back_label_score">Ton score précédant était</string>
     <string name="score_content_label">Ton score est de </string>
     <string name="score_title_label">Bravo !</string>
@@ -41,7 +42,6 @@
     <string name="name_label">Email</string>
     <string name="password_label">Mot de passe</string>
     <string name="login">Se connecter</string>
-    <string name="lets_play">Login</string>
     <!-- ################ - ACCOUNT CREATION - ####################### -->
     <string name="create_account">Crée ton nouveau compte</string>
     <string name="password">mot de passe</string>

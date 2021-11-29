@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TopQuiz</string>
+    <string name="lets_play">Play</string>
     <string name="welcome_back_label">Welcome back</string>
     <string name="welcome_back_label_score">Your previous score was</string>
     <string name="score_content_label">Your score is </string>

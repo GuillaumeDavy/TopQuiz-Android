@@ -7,14 +7,15 @@
 
     <TextView
         android:id="@+id/textViewSelectCategory"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="348dp"
+        android:layout_height="63dp"
         android:layout_marginStart="71dp"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="71dp"
         android:layout_marginBottom="70dp"
         android:gravity="center"
         android:text="@string/select_category"
+        android:textSize="32dp"
         app:layout_constraintBottom_toTopOf="@+id/spinnerSelectCategory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +35,11 @@
 
     <Button
         android:id="@+id/buttonPlaySelectCategory"
-        android:layout_width="250dp"
-        android:layout_height="0dp"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="15dp"
         android:text="@string/lets_play"
+        android:textSize="24dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonAddQuestionSelectCategory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
@@ -46,10 +48,11 @@
 
     <Button
         android:id="@+id/buttonAddQuestionSelectCategory"
-        android:layout_width="250dp"
-        android:layout_height="0dp"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="244dp"
         android:text="@string/add_question"
+        android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
