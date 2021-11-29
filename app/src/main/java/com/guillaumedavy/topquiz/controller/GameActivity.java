@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
 import com.guillaumedavy.topquiz.model.User;
@@ -135,10 +136,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void displayQuestion(final Question question){
         mQuestionTextView.setText(question.getQuestion());
-        mResponseOneButton.setText(question.getChoiceList().get(0));
-        mResponseTwoButton.setText(question.getChoiceList().get(1));
-        mResponseThreeButton.setText(question.getChoiceList().get(2));
-        mResponseFourButton.setText(question.getChoiceList().get(3));
+        mResponseOneButton.setText(question.getAnswer1());
+        mResponseTwoButton.setText(question.getAnswer2());
+        mResponseThreeButton.setText(question.getAnswer3());
+        mResponseFourButton.setText(question.getAnswer4());
     }
 
     /**
@@ -163,69 +164,70 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return la banque de questions
      */
     private QuestionBank generateQuestionBank(){
+        Category cultureGenerale = new Category(1, getString(R.string.categorie1));
         Question question1 = new Question(
+                1,
+                cultureGenerale,
                 getString(R.string.question1),
-                Arrays.asList(
-                        getString(R.string.response11),
-                        getString(R.string.response12),
-                        getString(R.string.response13),
-                        getString(R.string.response14)
-                ),
+                getString(R.string.response11),
+                getString(R.string.response12),
+                getString(R.string.response13),
+                getString(R.string.response14),
                 0
         );
 
         Question question2 = new Question(
+                2,
+                cultureGenerale,
                 getString(R.string.question2),
-                Arrays.asList(
-                        getString(R.string.response21),
-                        getString(R.string.response22),
-                        getString(R.string.response23),
-                        getString(R.string.response24)
-                ),
+                getString(R.string.response21),
+                getString(R.string.response22),
+                getString(R.string.response23),
+                getString(R.string.response24),
                 3
         );
 
         Question question3 = new Question(
+                3,
+                cultureGenerale,
                 getString(R.string.question3),
-                Arrays.asList(
-                        getString(R.string.response31),
-                        getString(R.string.response32),
-                        getString(R.string.response33),
-                        getString(R.string.response34)
-                ),
+                getString(R.string.response31),
+                getString(R.string.response32),
+                getString(R.string.response33),
+                getString(R.string.response34),
                 3
         );
 
         Question question4 = new Question(
+                4,
+                cultureGenerale,
                 getString(R.string.question4),
-                Arrays.asList(
-                        getString(R.string.response41),
-                        getString(R.string.response42),
-                        getString(R.string.response43),
-                        getString(R.string.response44)
-                ),
+                getString(R.string.response41),
+                getString(R.string.response42),
+                getString(R.string.response43),
+                getString(R.string.response44),
                 2
         );
 
         Question question5 = new Question(
+                5,
+                cultureGenerale,
                 getString(R.string.question5),
-                Arrays.asList(
-                        getString(R.string.response51),
-                        getString(R.string.response52),
-                        getString(R.string.response53),
-                        getString(R.string.response54)
-                ),
+                getString(R.string.response51),
+                getString(R.string.response52),
+                getString(R.string.response53),
+                getString(R.string.response54),
                 2
         );
 
         Question question6 = new Question(
+                6,
+                cultureGenerale,
                 getString(R.string.question6),
-                Arrays.asList(
-                        getString(R.string.response61),
-                        getString(R.string.response62),
-                        getString(R.string.response63),
-                        getString(R.string.response64)
-                ),
+                getString(R.string.response61),
+                getString(R.string.response62),
+                getString(R.string.response63),
+                getString(R.string.response64),
                 1
         );
 
