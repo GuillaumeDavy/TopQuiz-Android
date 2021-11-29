@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNameEditText;
     private Button mPlayButton;
     //Attributs
-    private User mUser = new User();
+    private Player mPlayer = new Player();
 
     /**
      * Est appelée lorsque l'activité est créée
@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Mémorise le nom et met le score par defaut
-                mUser.setFirstname(mNameEditText.getText().toString());
+                mPlayer.setUserEmail(mNameEditText.getText().toString());
                 //Creer un Intent pour passer le joueur au game activity
                 Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
-                System.out.println(mUser);
-                gameActivity.putExtra(GameActivity.USER, mUser);
+                System.out.println(mPlayer);
+                gameActivity.putExtra(GameActivity.USER, mPlayer);
                 User user = gameActivity.getParcelableExtra(GameActivity.USER);
                 System.out.println("Main " + user);
                 startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
@@ -93,11 +93,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Fetch the score from the Intent
-            mUser = data.getParcelableExtra(GameActivity.USER);
-            System.out.println(mUser.toString());
+            mPlayer = data.getParcelableExtra(GameActivity.USER);
+            System.out.println(mPlayer.toString());
             displayNameAndScore(
-                    mUser.getFirstname(),
-                    mUser.getScore()
+                    mPlayer.getUserEmail(),
+                    mPlayer.getScore()
             );
         }
     }

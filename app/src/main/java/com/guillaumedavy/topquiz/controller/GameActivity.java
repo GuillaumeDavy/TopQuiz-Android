@@ -4,9 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -17,12 +15,11 @@ import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Category;
+import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
-import com.guillaumedavy.topquiz.model.User;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
@@ -41,7 +38,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private QuestionBank mQuestionBank;
     private int mRemainingQuestionCount;
     private boolean mEnableTouchEvents;
-    private User mUser;
+    private Player mUser;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

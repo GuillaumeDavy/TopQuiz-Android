@@ -1,110 +1,78 @@
 package com.guillaumedavy.topquiz.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.io.Serializable;
 
-public class User implements Parcelable {
-
-    private String mFirstname;
-    private int mScore;
-
-    /**
-     * Constructeur par défault
-     * firstname vide et score = 0
-     */
-    public User(){
-        mFirstname = "";
-        mScore = 0;
-    }
+public class User implements Serializable {
+    private final long mId;
+    private final String mUsername;
+    private final String mPassword;
+    private final String mEmail;
+    private final boolean mIsAdmin;
 
     /**
      * Constructeur
-     * @param firstname : le nom du joueur (String)
-     * @param score : le score du joueur (int)
+     * @param id : l'id du joueur
+     * @param username : le pseudo du joueur
+     * @param password : le mot de passe du joueur
+     * @param email : l'email du joueur (login)
+     * @param isAdmin : le joueur est-il admin ?
      */
-    public User(String firstname, int score){
-        this.mFirstname = firstname;
-        this.mScore = score;
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            System.out.println("Creator -> firstname : " + in.readString() + " score : " + in.readInt());
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mScore);
-        dest.writeString(mFirstname);
+    public User(long id, String username, String password, String email, boolean isAdmin) {
+        mId = id;
+        mUsername = username;
+        mPassword = password;
+        mEmail = email;
+        mIsAdmin = isAdmin;
     }
 
     /**
-     * Renvoie le nom du joueur
-     * @return firstName
+     * Permet de recuperer l'id de l'utilisateur
+     * @return l'id du joueur
      */
-    public String getFirstname() {
-        return mFirstname;
+    public long getId() {
+        return mId;
     }
 
     /**
-     * Permet de changer le nom du joueur
-     * @param firstname : le nouveau nom du joueur (String)
+     * Permet de recuperer le username de l'utilisateur
+     * @return le username du joueur
      */
-    public void setFirstname(String firstname) {
-        mFirstname = firstname;
+    public String getUsername() {
+        return mUsername;
     }
 
     /**
-     * Permet de récupérer le score actuel du joueur.
-     * @return score
+     * Permet de recuperer le mot de passe du joueur
+     * @return le mot de passe du joueur
      */
-    public int getScore() {
-        return mScore;
+    public String getPassword() {
+        return mPassword;
     }
 
     /**
-     * Permet de changer le score du joueur
-     * @param score : le nouveau score (int)
+     * Permet de recuperer l'email du joueur
+     * @return l'email du joueur (login)
      */
-    public void setScore(int score) {
-        this.mScore = score;
+    public String getEmail() {
+        return mEmail;
     }
 
     /**
-     * Increment player score by one
+     * Permet de recuperer le status du joueur, admin ou non
+     * @return true ou false si admin
      */
-    public void incrementScoreByOne(){
-        mScore++;
-    }
-
-    /**
-     * Constructeur privé permettant de construire un User depuis un Parcel
-     * @param in : un Parcel
-     */
-    private User(Parcel in) {
-        System.out.println("To User -> firstname : " + in.readString() + " score : " + in.readInt());
-        mFirstname = in.readString();
-        mScore = in.readInt();
+    public boolean isAdmin() {
+        return mIsAdmin;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "mFirstname='" + mFirstname + '\'' +
-                ", mScore=" + mScore +
+                "mId=" + mId +
+                ", mUsername='" + mUsername + '\'' +
+                ", mPassword='" + mPassword + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mIsAdmin=" + mIsAdmin +
                 '}';
     }
 }
