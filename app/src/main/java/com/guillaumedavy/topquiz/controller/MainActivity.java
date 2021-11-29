@@ -16,16 +16,22 @@ import android.widget.TextView;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.User;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
+    private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
     private static final String SHARED_PREF_USER_INFO = "SHARED_PREF_USER_INFO";
     private static final String SHARED_PREF_USER_INFO_NAME = "SHARED_PREF_USER_INFO_NAME";
     private static final String SHARED_PREF_USER_INFO_SCORE = "SHARED_PREF_USER_INFO_SCORE";
+    public static final String EMAIL = "EMAIL";
 
     //Les élèments de la vue
     private TextView mGreetingTextView;
     private EditText mNameEditText;
     private Button mPlayButton;
+    private TextView mCreateAccount;
+    private TextView mLogin;
     //Attributs
     private User mUser = new User();
 
@@ -43,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         mNameEditText = findViewById(R.id.main_edittext_name);
         mPlayButton = findViewById(R.id.main_button_play);
         mPlayButton.setEnabled(false); //Button désactivé
+        mCreateAccount = findViewById(R.id.create_account);
+        mLogin = findViewById(R.id.main_edittext_name);
 
         displayNameAndScore(
                 getSharedPreferences(SHARED_PREF_USER_INFO, MODE_PRIVATE).getString(SHARED_PREF_USER_INFO_NAME, null),
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //On ajoute un listener sur le click du button
+        //TODO Check credentials before redirect !!!
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Appelée lorsqu'un clique est réalisé sur le button
@@ -84,13 +93,27 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
+
+        // Listener sur le texte de création de compte
+        mCreateAccount.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent createAccountActivity = new Intent(MainActivity.this, CreateAccountActivity.class);
+                startActivityForResult(createAccountActivity, CREATE_ACCOUNT_REQUEST_CODE);
+            }
+        });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(CREATE_ACCOUNT_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
+            // Fetch the Email from CreateAccountActivity
+            mLogin.setText(data.getParcelableExtra(CreateAccountActivity.EMAIL));
+        }
+
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            //Fetch the score from the Intent
             mUser = data.getParcelableExtra(GameActivity.USER);
             System.out.println(mUser.toString());
             displayNameAndScore(

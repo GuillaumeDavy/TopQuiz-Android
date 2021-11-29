@@ -1,4 +1,6 @@
 package com.guillaumedavy.topquiz.controller;
 
-public class AddQuestionActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class AddQuestionActivity extends AppCompatActivity {
 }

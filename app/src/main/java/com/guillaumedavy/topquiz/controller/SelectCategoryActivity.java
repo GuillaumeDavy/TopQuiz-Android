@@ -1,4 +1,6 @@
 package com.guillaumedavy.topquiz.controller;
 
-public class SelectCategoryActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SelectCategoryActivity extends AppCompatActivity {
 }
