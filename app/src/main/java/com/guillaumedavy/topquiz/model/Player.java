@@ -76,6 +76,13 @@ public class Player implements Parcelable {
         mScore++;
     }
 
+    /**
+     * Reinitialise le score a 0
+     */
+    public void resetScore(){
+        mScore = 0;
+    }
+
     @Override
     public int describeContents() {
         return 0;

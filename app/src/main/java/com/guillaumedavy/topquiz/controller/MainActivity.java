@@ -1,9 +1,11 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
@@ -33,11 +36,16 @@ public class MainActivity extends AppCompatActivity {
      * Est appelée lorsque l'activité est créée
      * @param savedInstanceState
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); //Permet de déterminer quel fichier layout utiliser
 
+        //Create default users
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        db.getWritableDatabase();
+        db.createDefaultUsers();
         //Lier les elements avec les id definis dans la vue
         mGreetingTextView = findViewById(R.id.main_textview_greeting);
         mNameEditText = findViewById(R.id.main_edittext_name);
@@ -80,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 //Creer un Intent pour passer le joueur au game activity
                 Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
                 System.out.println(mPlayer);
+                mPlayer.resetScore();
                 gameActivity.putExtra(GameActivity.USER, mPlayer);
                 Player user = gameActivity.getParcelableExtra(GameActivity.USER);
                 System.out.println("Main " + user);

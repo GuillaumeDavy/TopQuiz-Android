@@ -1,10 +1,12 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -14,7 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
-import com.guillaumedavy.topquiz.model.DatabaseHelper.TopQuizDBHelper;
+import com.guillaumedavy.topquiz.model.Category;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
@@ -62,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(intent.hasExtra(USER)){
             System.out.println("OK");
             mUser = intent.getParcelableExtra(USER);
-            System.out.println("Gane " + mUser);
+            System.out.println("Game " + mUser);
         }
 
         if(savedInstanceState != null){
@@ -160,11 +163,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Permet la génération de questions pour le jeu
      * @return la banque de questions
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private QuestionBank generateQuestionBank(){
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        db.createDefaultQuestionsIfNeed();
+        db.createDefaultCategoriesAndQuestionsIfNeed();
+        db.getAllCategories().forEach(System.out::println);
         return new QuestionBank(db.getAllQuestions());
     }
 }
