@@ -15,9 +15,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
+import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.User;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
         db.createDefaultUsers();
+
         //Lier les elements avec les id definis dans la vue
         mGreetingTextView = findViewById(R.id.main_textview_greeting);
         mNameEditText = findViewById(R.id.main_edittext_name);

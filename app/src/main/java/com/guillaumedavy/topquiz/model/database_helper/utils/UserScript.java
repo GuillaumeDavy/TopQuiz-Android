@@ -28,6 +28,11 @@ public class UserScript {
                 + " WHERE " + COLUMN_USER_EMAIL + "=\"" + email + "\"";
     }
 
+    public static final String selectUserById(long id){
+        return "SELECT  * FROM " + TABLE_NAME
+                + " WHERE " + COLUMN_USER_ID + "=" + id;
+    }
+
     public static final String countAllQuery(){
         return "SELECT  * FROM " + TABLE_NAME;
     }
