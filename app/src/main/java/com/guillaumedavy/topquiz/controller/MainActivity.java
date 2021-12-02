@@ -1,10 +1,11 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +15,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
+import com.guillaumedavy.topquiz.model.Player;
+import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
@@ -27,16 +34,22 @@ public class MainActivity extends AppCompatActivity {
     private EditText mNameEditText;
     private Button mPlayButton;
     //Attributs
-    private User mUser = new User();
+    private Player mPlayer = new Player();
 
     /**
      * Est appelée lorsque l'activité est créée
      * @param savedInstanceState
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); //Permet de déterminer quel fichier layout utiliser
+
+        //Create default users
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        db.getWritableDatabase();
+        db.createDefaultUsers();
 
         //Lier les elements avec les id definis dans la vue
         mGreetingTextView = findViewById(R.id.main_textview_greeting);
@@ -76,11 +89,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Mémorise le nom et met le score par defaut
-                mUser.setFirstname(mNameEditText.getText().toString());
+                mPlayer.setUserEmail(mNameEditText.getText().toString());
                 //Creer un Intent pour passer le joueur au game activity
                 Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
-                System.out.println(mUser);
-                gameActivity.putExtra(GameActivity.USER, mUser);
+                System.out.println(mPlayer);
+                mPlayer.resetScore();
+                gameActivity.putExtra(GameActivity.USER, mPlayer);
+                Player user = gameActivity.getParcelableExtra(GameActivity.USER);
+                System.out.println("Main " + user);
                 startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -91,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Fetch the score from the Intent
-            mUser = data.getParcelableExtra(GameActivity.USER);
-            System.out.println(mUser.toString());
+            mPlayer = data.getParcelableExtra(GameActivity.USER);
+            System.out.println(mPlayer.toString());
             displayNameAndScore(
-                    mUser.getFirstname(),
-                    mUser.getScore()
+                    mPlayer.getUserEmail(),
+                    mPlayer.getScore()
             );
         }
     }
