@@ -1,12 +1,12 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -16,12 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
-import com.guillaumedavy.topquiz.model.Category;
-import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
-import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
+import com.guillaumedavy.topquiz.model.User;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -63,7 +62,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = getIntent();
         if(intent.hasExtra(USER)){
-            System.out.println("OK");
             mUser = intent.getParcelableExtra(USER);
             System.out.println("Game " + mUser);
         }
@@ -78,8 +76,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             mQuestionBank = generateQuestionBank();
             mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
         }
-
-        System.out.println(mUser);
 
         mQuestionTextView = findViewById(R.id.game_activity_textview_question);
         mResponseOneButton = findViewById(R.id.game_activity_button_1);

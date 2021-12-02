@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TopQuiz</string>
-    <string name="welcome_label">Welcome in TopQuiz. What\'s your name ?</string>
+    <string name="lets_play">Play</string>
     <string name="welcome_back_label">Welcome back</string>
     <string name="welcome_back_label_score">Your previous score was</string>
-    <string name="name_label">Please type your name</string>
-    <string name="lets_play">Let\'s play</string>
     <string name="score_content_label">Your score is </string>
     <string name="score_title_label">Well done !</string>
     <string name="score_button_label">OK</string>
@@ -39,6 +37,27 @@
     <string name="response62">3</string>
     <string name="response63">4</string>
     <string name="response64">5</string>
-    <string name="categorie1">General Culture</string>
-    <string name="categorie2">Sport</string>
+    <!-- ##################### - LOGIN - ############################# -->
+    <string name="welcome_label">Welcome in TopQuiz. Please login to play !</string>
+    <string name="name_label">Email</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="login">Login</string>
+    <!-- ################ - ACCOUNT CREATION - ####################### -->
+    <string name="create_account">Create your account</string>
+    <string name="password">password</string>
+    <string name="username">username</string>
+    <string name="create_account_button">Create</string>
+    <!-- ################ - SELECT CATEGORY  - ####################### -->
+    <string name="select_category">Select a category</string>
+    <string name="add_question">Add a question</string>
+    <!-- ################ - ADD A QUESTION   - ####################### -->
+    <string name="new_question">New question</string>
+    <string name="answers">Answers</string>
+    <string name="new_answer_1">Answer 1</string>
+    <string name="new_answer_2">Answer 2</string>
+    <string name="new_answer_3">Answer 3</string>
+    <string name="new_answer_4">Answer 4</string>
+    <string name="choose_good_answer">Choose the good answer</string>
+    <string name="validate_question">Add this question</string>
+    <string name="choosed_category">choosed Cat.</string>
 </resources>
