@@ -1,12 +1,14 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -16,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
 import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 import java.util.Arrays;
 import java.util.List;
