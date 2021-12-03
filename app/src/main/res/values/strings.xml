@@ -60,4 +60,6 @@
     <string name="choose_good_answer">Choose the good answer</string>
     <string name="validate_question">Add this question</string>
     <string name="choosed_category">choosed Cat.</string>
+    <string name="categorie1">General Culture</string>
+    <string name="categorie2">Sport</string>
 </resources>

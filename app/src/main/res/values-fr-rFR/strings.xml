@@ -60,5 +60,7 @@
     <string name="choose_good_answer">Choisi la bonne réponse</string>
     <string name="validate_question">Ajout de la question</string>
     <string name="choosed_category">Cat. choisie</string>
+    <string name="categorie1">Culture Generale</string>
+    <string name="categorie2">Sport</string>
 
 </resources>

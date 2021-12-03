@@ -16,8 +16,6 @@ import android.widget.TextView;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.User;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mCreateAccount;
     private TextView mLogin;
     //Attributs
-    private User mUser = new User();
+    private Player mPlayer = new Player();
 
     /**
      * Est appelée lorsque l'activité est créée
@@ -85,11 +83,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Mémorise le nom et met le score par defaut
-                mUser.setFirstname(mNameEditText.getText().toString());
+                mPlayer.setUserEmail(mNameEditText.getText().toString());
                 //Creer un Intent pour passer le joueur au game activity
                 Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
-                System.out.println(mUser);
-                gameActivity.putExtra(GameActivity.USER, mUser);
+                System.out.println(mPlayer);
+                mPlayer.resetScore();
+                gameActivity.putExtra(GameActivity.USER, mPlayer);
+                Player user = gameActivity.getParcelableExtra(GameActivity.USER);
+                System.out.println("Main " + user);
                 startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -114,11 +115,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            mUser = data.getParcelableExtra(GameActivity.USER);
-            System.out.println(mUser.toString());
+            //Fetch the score from the Intent
+            mPlayer = data.getParcelableExtra(GameActivity.USER);
+            System.out.println(mPlayer.toString());
             displayNameAndScore(
-                    mUser.getFirstname(),
-                    mUser.getScore()
+                    mPlayer.getUserEmail(),
+                    mPlayer.getScore()
             );
         }
     }

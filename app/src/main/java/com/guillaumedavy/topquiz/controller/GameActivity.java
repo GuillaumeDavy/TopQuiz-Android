@@ -1,12 +1,14 @@
 package com.guillaumedavy.topquiz.controller;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -16,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
 import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +44,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private QuestionBank mQuestionBank;
     private int mRemainingQuestionCount;
     private boolean mEnableTouchEvents;
-    private User mUser;
+    private Player mUser;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -55,6 +59,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onSaveInstanceState(outState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +68,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         if(intent.hasExtra(USER)){
             mUser = intent.getParcelableExtra(USER);
-            System.out.println("User in game " + mUser);
+            System.out.println("Game " + mUser);
         }
 
         if(savedInstanceState != null){
@@ -132,10 +137,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void displayQuestion(final Question question){
         mQuestionTextView.setText(question.getQuestion());
-        mResponseOneButton.setText(question.getChoiceList().get(0));
-        mResponseTwoButton.setText(question.getChoiceList().get(1));
-        mResponseThreeButton.setText(question.getChoiceList().get(2));
-        mResponseFourButton.setText(question.getChoiceList().get(3));
+        mResponseOneButton.setText(question.getAnswer1());
+        mResponseTwoButton.setText(question.getAnswer2());
+        mResponseThreeButton.setText(question.getAnswer3());
+        mResponseFourButton.setText(question.getAnswer4());
     }
 
     /**
@@ -159,80 +164,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Permet la génération de questions pour le jeu
      * @return la banque de questions
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private QuestionBank generateQuestionBank(){
-        Question question1 = new Question(
-                getString(R.string.question1),
-                Arrays.asList(
-                        getString(R.string.response11),
-                        getString(R.string.response12),
-                        getString(R.string.response13),
-                        getString(R.string.response14)
-                ),
-                0
-        );
-
-        Question question2 = new Question(
-                getString(R.string.question2),
-                Arrays.asList(
-                        getString(R.string.response21),
-                        getString(R.string.response22),
-                        getString(R.string.response23),
-                        getString(R.string.response24)
-                ),
-                3
-        );
-
-        Question question3 = new Question(
-                getString(R.string.question3),
-                Arrays.asList(
-                        getString(R.string.response31),
-                        getString(R.string.response32),
-                        getString(R.string.response33),
-                        getString(R.string.response34)
-                ),
-                3
-        );
-
-        Question question4 = new Question(
-                getString(R.string.question4),
-                Arrays.asList(
-                        getString(R.string.response41),
-                        getString(R.string.response42),
-                        getString(R.string.response43),
-                        getString(R.string.response44)
-                ),
-                2
-        );
-
-        Question question5 = new Question(
-                getString(R.string.question5),
-                Arrays.asList(
-                        getString(R.string.response51),
-                        getString(R.string.response52),
-                        getString(R.string.response53),
-                        getString(R.string.response54)
-                ),
-                2
-        );
-
-        Question question6 = new Question(
-                getString(R.string.question6),
-                Arrays.asList(
-                        getString(R.string.response61),
-                        getString(R.string.response62),
-                        getString(R.string.response63),
-                        getString(R.string.response64)
-                ),
-                1
-        );
-
-        return new QuestionBank(Arrays.asList(
-                question1,
-                question2,
-                question3,
-                question4,
-                question5,
-                question6
-        ));
+        //Database
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        db.getWritableDatabase();
+        db.createDefaultCategoriesAndQuestionsIfNeed();
+        db.getAllCategories().forEach(System.out::println);
+        return new QuestionBank(db.getAllQuestions());
     }
 }
