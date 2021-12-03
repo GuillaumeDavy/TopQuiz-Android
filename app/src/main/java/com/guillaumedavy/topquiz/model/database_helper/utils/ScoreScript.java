@@ -59,7 +59,7 @@ public class ScoreScript {
      * Requete SQL qui permet de récupérer l'id max de la table
      * @return La requete SQL
      */
-    public static final String selectMaxScoreId(){
+    public static final String selectMaxId(){
         return "SELECT  MAX(" + COLUMN_SCORE_ID + ") FROM " + TABLE_NAME;
     }
 

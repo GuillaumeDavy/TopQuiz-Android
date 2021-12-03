@@ -33,6 +33,14 @@ public class UserScript {
                 + " WHERE " + COLUMN_USER_ID + "=" + id;
     }
 
+    /**
+     * Requete SQL qui permet de récupérer l'id max de la table
+     * @return La requete SQL
+     */
+    public static final String selectMaxId(){
+        return "SELECT  MAX(" + COLUMN_USER_ID + ") FROM " + TABLE_NAME;
+    }
+
     public static final String countAllQuery(){
         return "SELECT  * FROM " + TABLE_NAME;
     }

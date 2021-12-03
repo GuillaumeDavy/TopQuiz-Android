@@ -507,6 +507,24 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public long getMaxUserId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(UserScript.selectMaxId(), null);
+        cursor.moveToFirst();
+        long id = cursor.getLong(0);
+        cursor.close();
+        return id;
+    }
+
+    public long getMaxScoreId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(ScoreScript.selectMaxId(), null);
+        cursor.moveToFirst();
+        long id = cursor.getLong(0);
+        cursor.close();
+        return id;
+    }
+
     private int getCategoriesCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(CategorieScript.countAllQuery(), null);
@@ -529,15 +547,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
 
         // return count
         return count;
-    }
-
-    private long getMaxScoreId(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(ScoreScript.selectMaxScoreId(), null);
-        cursor.moveToFirst();
-        long id = cursor.getLong(0);
-        cursor.close();
-        return id;
     }
 
     private int getQuestionsCount() {

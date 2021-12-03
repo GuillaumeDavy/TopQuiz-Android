@@ -8,21 +8,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewCreateAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:layout_gravity="center"
-        android:textSize="32dp"
-        android:gravity="center"
-        android:text="@string/create_account"/>
-
 
     <EditText
         android:id="@+id/editTextUsernameCreateAccount"
         android:layout_width="match_parent"
-        android:layout_height="99dp"
+        android:layout_height="50dp"
         android:layout_marginHorizontal="15dp"
         android:layout_marginBottom="10dp"
 
@@ -31,9 +21,20 @@
         android:inputType="textPersonName" />
 
     <EditText
+        android:id="@+id/editTextEmailCreateAccount"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="10dp"
+
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:id="@+id/editTextPasswordCreateAccount"
         android:layout_width="match_parent"
-        android:layout_height="102dp"
+        android:layout_height="50dp"
         android:layout_marginHorizontal="15dp"
         android:layout_marginBottom="10dp"
 
@@ -44,7 +45,7 @@
     <EditText
         android:id="@+id/editTextConfirmPasswordCreateAccount"
         android:layout_width="match_parent"
-        android:layout_height="98dp"
+        android:layout_height="50dp"
         android:layout_marginHorizontal="15dp"
         android:ems="10"
         android:hint="@string/password"
@@ -53,9 +54,10 @@
     <Button
         android:id="@+id/buttonCreateAccount"
         android:layout_width="178dp"
-        android:layout_height="77dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
         android:layout_marginHorizontal="15dp"
         android:text="@string/create_account_button"
         android:textSize="24dp"></Button>
+
 </LinearLayout>

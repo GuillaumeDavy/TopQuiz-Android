@@ -2,38 +2,45 @@ package com.guillaumedavy.topquiz.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
+
+import java.util.Objects;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener{
     public static final String EMAIL = "EMAIL";
 
     // View elements
+    private TextView mUsername;
     private TextView mEmail;
-    private Button mButton;
+    private Button mButtonCreate;
     private TextView mPassword;
     private TextView mPasswordConfirm;
 
     @Override
-    public void onCreate( Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_account); //Permet de déterminer quel fichier layout utiliser
 
-        mEmail = findViewById(R.id.editTextUsernameCreateAccount);
-        mButton = findViewById(R.id.buttonCreateAccount);
+        //Retour a la home
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        mUsername = findViewById(R.id.editTextUsernameCreateAccount);
+        mEmail = findViewById(R.id.editTextEmailCreateAccount);
         mPassword = findViewById(R.id.editTextPasswordCreateAccount);
         mPasswordConfirm = findViewById(R.id.editTextConfirmPasswordCreateAccount);
-        mButton.setEnabled(false);
+        mButtonCreate = findViewById(R.id.buttonCreateAccount);
+        mButtonCreate.setEnabled(false);
 
         mEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -47,9 +54,9 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             public void afterTextChanged(Editable s) {
             //Active le button si il y a du text dans le TextEdit
                 if(checkAccountPassword()){
-                    mButton.setEnabled(true);
+                    mButtonCreate.setEnabled(true);
                 }else{
-                    mButton.setEnabled(false);
+                    mButtonCreate.setEnabled(false);
                 }
             }
         });
@@ -68,9 +75,9 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             @Override
             public void afterTextChanged(Editable s) {
                 if(checkAccountPassword()){
-                    mButton.setEnabled(true);
+                    mButtonCreate.setEnabled(true);
                 }else{
-                    mButton.setEnabled(false);
+                    mButtonCreate.setEnabled(false);
                 }
             }
         });
@@ -87,42 +94,85 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void afterTextChanged(Editable s) {
-//Active le button si il y a du text dans le TextEdit
+                //Active le button si il y a du text dans le TextEdit
                 if(checkAccountPassword()){
-                    mButton.setEnabled(true);
+                    mButtonCreate.setEnabled(true);
                 }else{
-                    mButton.setEnabled(false);
+                    mButtonCreate.setEnabled(false);
                 }
             }
         });
-        mButton.setOnClickListener(new View.OnClickListener() {
+        mButtonCreate.setOnClickListener(new View.OnClickListener() {
             /**
              * TODO Enregistrer le USER en base
-             * Appelée lorsqu'un clique est réalisé sur le button
+             * Appelée lorsqu'un clique est réalisé sur le button de creation
              * @param v
              */
             @Override
             public void onClick(View v) {
                 Intent MainActivity = new Intent(CreateAccountActivity.this, MainActivity.class);
-                MainActivity.putExtra(EMAIL, String.valueOf(mEmail));
+                long userID = createUserAndAddInDB();
+                MainActivity.putExtra(EMAIL, mEmail.getText().toString());
                 setResult(RESULT_OK, MainActivity);
 
                 startActivity(MainActivity);
                 finish();
-
             }
         });
-
-
-
-
     }
-    public boolean checkAccountPassword(){
-        //Active le button si il y a du text dans le TextEdit
-        return (mEmail.getText().toString().contains("@") && mPassword.getText().toString().equals(mPasswordConfirm.getText().toString()) && mPassword != null && mPasswordConfirm != null);
+
+    /**
+     * Créer l'utilisateur et l'enregistre en base de donnée
+     * @return l'id du joueur crée
+     */
+    public long createUserAndAddInDB(){
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        db.getWritableDatabase();
+        long id = db.getMaxUserId();
+        User user = new User(
+                ++id,
+                checkUserName(mUsername.getText().toString()),
+                mPassword.getText().toString(),
+                mEmail.getText().toString(),
+                false
+        );
+        db.addUser(user);
+        return id;
     }
+
+    /**
+     * Permet le retour à la page d'accueil
+     * @param item
+     * @return true
+     */
+    public boolean onOptionsItemSelected(MenuItem item){
+        startActivityForResult(new Intent(getApplicationContext(), MainActivity.class), 0);
+        return true;
+    }
+
     @Override
     public void onClick(View v) {
 
+    }
+
+    /**
+     * Vérifie que l'email est renseigné avec un @
+     * Que les champs de password sont identiques et renseignés
+     * @return si c'est ok
+     */
+    private boolean checkAccountPassword(){
+        //Active le button si il y a du text dans le TextEdit
+        return (mEmail.getText().toString().contains("@") && mPassword.getText().toString().equals(mPasswordConfirm.getText().toString()) && mPassword != null && mPasswordConfirm != null);
+    }
+
+    /**
+     * Vérifie que dans le username il y a quelque chose
+     * si rien n'est renseigné le username devient la partie
+     * avant le @ de l'adresse email
+     * @param maybeUsername le contenu du champ mUsername
+     * @return le username
+     */
+    private String checkUserName(String maybeUsername){
+        return maybeUsername.isEmpty() ? mEmail.getText().toString().split("@")[0] : maybeUsername;
     }
 }

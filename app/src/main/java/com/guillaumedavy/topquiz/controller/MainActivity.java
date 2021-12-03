@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.guillaumedavy.topquiz.R;
-import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.Player;
 
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
