@@ -29,6 +29,7 @@ import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
+    public static final String CATEGORY = "CATEGORY";
     public static final int NUMBER_OF_QUESTIONS = 4;
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
     public static final String BUNDLE_STATE_QUESTION_COUNT = "BUNDLE_STATE_QUESTION_COUNT";
@@ -45,6 +46,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int mRemainingQuestionCount;
     private boolean mEnableTouchEvents;
     private Player mUser;
+    private String mCategory;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -66,9 +68,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
 
         Intent intent = getIntent();
-        if(intent.hasExtra(USER)){
+        if(intent.hasExtra(USER) && intent.hasExtra(CATEGORY)){
             mUser = intent.getParcelableExtra(USER);
-            System.out.println("Game " + mUser);
+            mCategory = intent.getStringExtra(CATEGORY);
+            System.out.println("Game --> " + mUser + ", Category : " + mCategory);
         }
 
         if(savedInstanceState != null){
@@ -144,16 +147,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Affichage de fin de jeu et retour vers mainActivity
+     * Affichage de fin de jeu et retour vers SelectCategoryActivity
      */
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
                 .setMessage(getString(R.string.score_content_label) + " " + mUser.getScore())
                 .setPositiveButton(getString(R.string.score_button_label), (dialog, which) -> {
-                    Intent intent = new Intent();
-                    intent.putExtra(USER, mUser);
-                    setResult(RESULT_OK, intent);
+                    Intent SelectCategoryActivity = new Intent(GameActivity.this, SelectCategoryActivity.class);
+                    SelectCategoryActivity.putExtra(USER, mUser);
+                    setResult(RESULT_OK, SelectCategoryActivity);
                     finish();
                 })
                 .create()

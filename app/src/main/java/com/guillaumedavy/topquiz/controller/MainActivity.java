@@ -24,6 +24,7 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 public class MainActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
+    private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
     private static final String SHARED_PREF_USER_INFO = "SHARED_PREF_USER_INFO";
     private static final String SHARED_PREF_USER_INFO_NAME = "SHARED_PREF_USER_INFO_NAME";
     private static final String SHARED_PREF_USER_INFO_SCORE = "SHARED_PREF_USER_INFO_SCORE";
@@ -57,11 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mPlayButton = findViewById(R.id.main_button_play);
         mPlayButton.setEnabled(false); //Button désactivé
         mCreateAccount = findViewById(R.id.create_account);
-
-        displayNameAndScore(
-                getSharedPreferences(SHARED_PREF_USER_INFO, MODE_PRIVATE).getString(SHARED_PREF_USER_INFO_NAME, null),
-                getSharedPreferences(SHARED_PREF_USER_INFO, MODE_PRIVATE).getInt(SHARED_PREF_USER_INFO_SCORE, 0)
-        );
+        
 
         //Create default user and admin
         TopQuizDBHelper db = new TopQuizDBHelper(this);
@@ -119,38 +116,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        /*
+        * Rentre dans cette boucle au retour de l'activity CreateAccount
+        */
         if(CREATE_ACCOUNT_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             // Fetch the Email from CreateAccountActivity
             mEmailEditText.setText(data.getParcelableExtra(CreateAccountActivity.EMAIL));
         }
-        if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            //Fetch the score from the Intent
-            mPlayer = data.getParcelableExtra(GameActivity.USER);
-            System.out.println(mPlayer.toString());
-            displayNameAndScore(
-                    mPlayer.getUserEmail(),
-                    mPlayer.getScore()
-            );
-        }
     }
 
-    /**
-     * Affiche le nom du joueur et son dernier score
-     * @param name : le nom du joueur
-     * @param score : son dernier score
-     */
-    private void displayNameAndScore(String name, int score){
-        if(name != null){
-            String text = getString(R.string.welcome_back_label) + " " + name + "\n" + getString(R.string.welcome_back_label_score) + " " + score;
-            mGreetingTextView.setText(text);
-            //Fill le textedit
-            mEmailEditText.setText(name);
-            //Place le curseur a la fin
-            mEmailEditText.setSelection(name.length());
-            //Active le bouton Jouer
-            mPlayButton.setEnabled(!name.isEmpty());
-        }
-    }
 
     /**
      * Action done when you click on login button
@@ -170,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
             Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
             System.out.println(mPlayer);
             mPlayer.resetScore();
-            selectCategoryActivity.putExtra(GameActivity.USER, mPlayer);
-            startActivityForResult(selectCategoryActivity, GAME_ACTIVITY_REQUEST_CODE);
+            selectCategoryActivity.putExtra(SelectCategoryActivity.USER, mPlayer);
+            startActivityForResult(selectCategoryActivity, SELECT_CATEGORY_REQUEST_CODE);
         } catch (SQLException e){
             mErrorTextView.setText(e.getMessage());
         } finally {

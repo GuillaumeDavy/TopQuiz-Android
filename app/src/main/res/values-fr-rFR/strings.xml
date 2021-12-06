@@ -50,7 +50,7 @@
     <string name="create_account_button">Créer</string>
     <!-- ################ - SELECT CATEGORY  - ####################### -->
     <string name="select_category">Choisi une catégorie</string>
-    <string name="add_question">Ajouter une question</string>
+    <string name="add_question">Ajouter une question </string>
     <!-- ################ - ADD A QUESTION   - ####################### -->
     <string name="new_question">Nouvelle question</string>
     <string name="answers">Réponses</string>
