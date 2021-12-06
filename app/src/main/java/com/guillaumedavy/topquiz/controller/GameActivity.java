@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
@@ -26,6 +27,8 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
@@ -74,31 +77,42 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             System.out.println("Game --> " + mUser + ", Category : " + mCategory);
         }
 
-        if(savedInstanceState != null){
-            mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
-            mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
-            mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
-            mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
-        } else {
-            //Game initialisation
-            mQuestionBank = generateQuestionBank();
-            mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        try {
+            db.getWritableDatabase();
+            Category category = db.getCategoryByName(mCategory);
+
+            if(savedInstanceState != null){
+                mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
+                mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
+                mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
+                mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
+            } else {
+                //Game initialisation
+                mQuestionBank = generateQuestionBank(category);
+                mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
+            }
+
+            mQuestionTextView = findViewById(R.id.game_activity_textview_question);
+            mResponseOneButton = findViewById(R.id.game_activity_button_1);
+            mResponseTwoButton = findViewById(R.id.game_activity_button_2);
+            mResponseThreeButton = findViewById(R.id.game_activity_button_3);
+            mResponseFourButton = findViewById(R.id.game_activity_button_4);
+
+            mResponseOneButton.setOnClickListener(this);
+            mResponseTwoButton.setOnClickListener(this);
+            mResponseThreeButton.setOnClickListener(this);
+            mResponseFourButton.setOnClickListener(this);
+
+            mEnableTouchEvents = true;
+
+            displayQuestion(mQuestionBank.getCurrentQuestion());
+
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
         }
-
-        mQuestionTextView = findViewById(R.id.game_activity_textview_question);
-        mResponseOneButton = findViewById(R.id.game_activity_button_1);
-        mResponseTwoButton = findViewById(R.id.game_activity_button_2);
-        mResponseThreeButton = findViewById(R.id.game_activity_button_3);
-        mResponseFourButton = findViewById(R.id.game_activity_button_4);
-
-        mResponseOneButton.setOnClickListener(this);
-        mResponseTwoButton.setOnClickListener(this);
-        mResponseThreeButton.setOnClickListener(this);
-        mResponseFourButton.setOnClickListener(this);
-
-        mEnableTouchEvents = true;
-
-        displayQuestion(mQuestionBank.getCurrentQuestion());
     }
 
     @Override
@@ -168,12 +182,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return la banque de questions
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private QuestionBank generateQuestionBank(){
+    private QuestionBank generateQuestionBank(Category category){
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
         db.createDefaultQuestionsIfNeeded();
-        db.getAllCategories().forEach(System.out::println);
-        return new QuestionBank(db.getAllQuestions());
+        return new QuestionBank(db.getQuestionsForCategory(category));
     }
 }

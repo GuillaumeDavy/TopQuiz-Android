@@ -8,7 +8,7 @@ public class CategorieScript {
     public static final String createTableQuery(){
         return "CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_CATEGORIE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_CATEGORIE_NAME + " TEXT"
+                + COLUMN_CATEGORIE_NAME + " TEXT UNIQUE"
                 + ")";
     }
 
@@ -19,6 +19,11 @@ public class CategorieScript {
     public static final String selectCategoryById(long id){
         return "SELECT  * FROM " + TABLE_NAME
                 + " WHERE " + COLUMN_CATEGORIE_ID + "=" + id;
+    }
+
+    public static final String selectCategoryByName(String name){
+        return "SELECT  * FROM " + TABLE_NAME
+                + " WHERE " + COLUMN_CATEGORIE_NAME + "=\"" + name + "\"";
     }
 
     public static final String countAllQuery(){

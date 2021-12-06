@@ -48,7 +48,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Fetch the score from the Intent
             mPlayer = data.getParcelableExtra(GameActivity.USER);
-            System.out.println(mPlayer.toString());
             displayNameAndScore(
                     mPlayer.getUserEmail(),
                     mPlayer.getScore()

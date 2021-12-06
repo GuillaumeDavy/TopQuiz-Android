@@ -28,7 +28,7 @@ import java.util.Optional;
 
 public class TopQuizDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
     private static final String DATABASE_NAME = "TOPQUIZ_DATABASE";
 
 
@@ -104,8 +104,39 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                             cursor.getString(6),                    //ANSWER 1
                             cursor.getInt(7)                        //CORRECT ANSWER
                     );
+                    questionList.add(question);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
+            cursor.close();
+        }
+        return questionList;
+    }
 
-                    // Adding question to list
+    /**
+     * Retourne la liste des questions pour une category
+     * @param category la category voulu
+     * @return toutes les questions de cette category
+     */
+    public List<Question> getQuestionsForCategory(Category category){
+        List<Question> questionList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(QuestionScript.selectAllQuestionForCategoryId(category.getId()), null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Question question = new Question(
+                            cursor.getLong(0),                      //ID
+                            this.getCategoryById(cursor.getInt(1)), //CATEGORY
+                            cursor.getString(2),                    //QUESTION
+                            cursor.getString(3),                    //ANSWER 1
+                            cursor.getString(4),                    //ANSWER 2
+                            cursor.getString(5),                    //ANSWER 3
+                            cursor.getString(6),                    //ANSWER 1
+                            cursor.getInt(7)                        //CORRECT ANSWER
+                    );
                     questionList.add(question);
                 } while (cursor.moveToNext());
             }
@@ -192,7 +223,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public void addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         Optional<User> maybeUser = this.getUserByEmail(user.getEmail());
-        if(maybeUser.isPresent() && user.getEmail().equals(maybeUser.get().getEmail())){
+        if(maybeUser.isPresent()){
             db.close();
             throw new SQLException("User already exists");
         }
@@ -279,6 +310,27 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         throw new SQLException("No match for category id=" + id);
+    }
+
+    /**
+     * Retourne la category correspondant au nom
+     * @param name nom de la category
+     * @return la category
+     */
+    public Category getCategoryByName(String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(CategorieScript.selectCategoryByName(name), null);
+
+        if (cursor.moveToFirst()) {
+            Category category = new Category(
+                    cursor.getLong(0),      //ID
+                    cursor.getString(1)     //NAME
+            );
+            cursor.close();
+            return category;
+        }
+        cursor.close();
+        throw new SQLException("No match for category name=" + name);
     }
 
     /**
@@ -472,78 +524,227 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
         if(this.getQuestionsCount() == 0) {
             Category cultureGenerale = this.getCategoryById(1);
             Category sport = this.getCategoryById(2);
+
             Question question1 = new Question(
                     1,
                     cultureGenerale,
-                    App.getContext().getResources().getString(R.string.question1),
-                    App.getContext().getResources().getString(R.string.response11),
-                    App.getContext().getResources().getString(R.string.response12),
-                    App.getContext().getResources().getString(R.string.response13),
-                    App.getContext().getResources().getString(R.string.response14),
+                    "Who is the creator of Android",
+                    "Andy Rubin",
+                    "Steve Wozniak",
+                    "Jake Wharton",
+                    "Paul Smith",
                     0
             );
-
             Question question2 = new Question(
                     2,
                     cultureGenerale,
-                    App.getContext().getResources().getString(R.string.question2),
-                    App.getContext().getResources().getString(R.string.response21),
-                    App.getContext().getResources().getString(R.string.response22),
-                    App.getContext().getResources().getString(R.string.response23),
-                    App.getContext().getResources().getString(R.string.response24),
+                    "When did the first man land on the moon",
+                    "1958",
+                    "1962",
+                    "Never",
+                    "1969",
                     3
             );
-
             Question question3 = new Question(
                     3,
                     cultureGenerale,
-                    App.getContext().getResources().getString(R.string.question3),
-                    App.getContext().getResources().getString(R.string.response31),
-                    App.getContext().getResources().getString(R.string.response32),
-                    App.getContext().getResources().getString(R.string.response33),
-                    App.getContext().getResources().getString(R.string.response34),
+                    "What is the house number of the Simpsons ?",
+                    "42",
+                    "101",
+                    "666",
+                    "742",
                     3
             );
-
             Question question4 = new Question(
                     4,
-                    sport,
-                    App.getContext().getResources().getString(R.string.question4),
-                    App.getContext().getResources().getString(R.string.response41),
-                    App.getContext().getResources().getString(R.string.response42),
-                    App.getContext().getResources().getString(R.string.response43),
-                    App.getContext().getResources().getString(R.string.response44),
-                    2
+                    cultureGenerale,
+                    "What is the biggest animal in the world ?",
+                    "The bolivian anaconda",
+                    "The pygmy marmosets",
+                    "The elephant",
+                    "The blue whale",
+                    3
             );
-
             Question question5 = new Question(
                     5,
-                    sport,
-                    App.getContext().getResources().getString(R.string.question5),
-                    App.getContext().getResources().getString(R.string.response51),
-                    App.getContext().getResources().getString(R.string.response52),
-                    App.getContext().getResources().getString(R.string.response53),
-                    App.getContext().getResources().getString(R.string.response54),
-                    2
+                    cultureGenerale,
+                    "Who is the richest man on earth in 2021?",
+                    "Jeff Bezos",
+                    "Elon Musk",
+                    "Mukesh Ambani",
+                    "Gautam Adani",
+                    0
             );
-
             Question question6 = new Question(
                     6,
+                    cultureGenerale,
+                    "How much is 284 in roman numbers",
+                    "CCLXXXIV",
+                    "CCXVVVIIII",
+                    "CICIIV",
+                    "IICVVVIV",
+                    0
+            );
+            Question question7 = new Question(
+                    7,
+                    cultureGenerale,
+                    "Camberra is a city of which country ?",
+                    "USA",
+                    "Chili",
+                    "Australia",
+                    "Greece",
+                    2
+            );
+            Question question8 = new Question(
+                    8,
+                    cultureGenerale,
+                    "How many species are threatened with extinction ?",
+                    "3.178",
+                    "14.403",
+                    "8.290",
+                    "16.306",
+                    3
+            );
+            Question question9 = new Question(
+                    9,
+                    cultureGenerale,
+                    "How deep is the Challenger Deep ?",
+                    "11.030 m",
+                    "3.880 m",
+                    "22.392 m",
+                    "17.256 m",
+                    0
+            );
+            Question question10 = new Question(
+                    10,
+                    cultureGenerale,
+                    "How many years has earth not been in war over the last 3.421 years ?",
+                    "2.201",
+                    "3.324",
+                    "1.285",
+                    "268",
+                    0
+            );
+            Question question11 = new Question(
+                    11,
                     sport,
-                    App.getContext().getResources().getString(R.string.question6),
-                    App.getContext().getResources().getString(R.string.response61),
-                    App.getContext().getResources().getString(R.string.response62),
-                    App.getContext().getResources().getString(R.string.response63),
-                    App.getContext().getResources().getString(R.string.response64),
+                    "What is the periodicity of the olympic games?",
+                    "1 year",
+                    "2 years",
+                    "3 years",
+                    "4 years",
+                    3
+            );
+            Question question12 = new Question(
+                    12,
+                    sport,
+                    "Where did the Summer Olympics take place in 2016?",
+                    "Rio de Janeiro",
+                    "Beijing",
+                    "Paris",
+                    "Tokyo",
                     1
             );
-
+            Question question13 = new Question(
+                    13,
+                    sport,
+                    "In which sport are the following terms used: split, spare, strike?",
+                    "Petanque",
+                    "Pool",
+                    "Bowling",
+                    "Volley-ball",
+                    2
+            );
+            Question question14 = new Question(
+                    14,
+                    sport,
+                    "In judo, what is the highest rank among these belts?",
+                    "Orange",
+                    "Blue",
+                    "Green",
+                    "Yellow",
+                    1
+            );
+            Question question15 = new Question(
+                    15,
+                    sport,
+                    "In rugby, which country does not participate in the Six Nations tournament?",
+                    "Spain",
+                    "England",
+                    "France",
+                    "Italie",
+                    0
+            );
+            Question question16 = new Question(
+                    16,
+                    sport,
+                    "In American Football how many points is a touchdown worth?",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    2
+            );
+            Question question17 = new Question(
+                    17,
+                    sport,
+                    "What is the official distance of a marathon?",
+                    "42 km",
+                    "42.195 km",
+                    "42.295 km",
+                    "42.395 km",
+                    1
+            );
+            Question question18 = new Question(
+                    18,
+                    sport,
+                    "How many times has France organized the Winter Olympics?",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    1
+            );
+            Question question19 = new Question(
+                    19,
+                    sport,
+                    "When did the first Soccer World Cup take place?",
+                    "1922",
+                    "1926",
+                    "1930",
+                    "1934",
+                    2
+            );
+            Question question20 = new Question(
+                    20,
+                    sport,
+                    "How many motorcycle titles has Valentino Rossi won?",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    3
+            );
             this.addQuestion(question1);
             this.addQuestion(question2);
             this.addQuestion(question3);
             this.addQuestion(question4);
             this.addQuestion(question5);
             this.addQuestion(question6);
+            this.addQuestion(question7);
+            this.addQuestion(question8);
+            this.addQuestion(question9);
+            this.addQuestion(question10);
+            this.addQuestion(question11);
+            this.addQuestion(question12);
+            this.addQuestion(question13);
+            this.addQuestion(question14);
+            this.addQuestion(question15);
+            this.addQuestion(question16);
+            this.addQuestion(question17);
+            this.addQuestion(question18);
+            this.addQuestion(question19);
+            this.addQuestion(question20);
         }
     }
 
