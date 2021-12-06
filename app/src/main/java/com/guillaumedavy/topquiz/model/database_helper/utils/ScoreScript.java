@@ -5,14 +5,14 @@ import com.guillaumedavy.topquiz.model.Score;
 public class ScoreScript {
     public static final String TABLE_NAME = "SCORE";
     public static final String COLUMN_SCORE_ID ="id";
-    public static final String COLUMN_SCORE_USERID ="user_id";
+    public static final String COLUMN_SCORE_USER_EMAIL ="user_email";
     public static final String COLUMN_SCORE_CATEGORYID ="category_id";
     public static final String COLUMN_SCORE_VALUE ="score_value";
 
     public static final String createTableQuery(){
         return "CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_SCORE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COLUMN_SCORE_USERID + " INTEGER, "
+                + COLUMN_SCORE_USER_EMAIL + " TEXT, "
                 + COLUMN_SCORE_CATEGORYID + " INTEGER, "
                 + COLUMN_SCORE_VALUE + " INTEGER "
                 + ")";
@@ -24,12 +24,12 @@ public class ScoreScript {
 
     /**
      * Requete SQL qui permet de recuperer tous les scores d'un utilisateur
-     * @param id : l'id du joueur
+     * @param email : l'email du joueur
      * @return la requete SQL
      */
-    public static final String selectByUserIdQuery(long id){
+    public static final String selectByUserEmailQuery(String email){
         return "SELECT  * FROM " + TABLE_NAME
-                + " WHERE " + COLUMN_SCORE_USERID + "=" + id;
+                + " WHERE " + COLUMN_SCORE_USER_EMAIL + "=\"" + email + "\"";
     }
 
     /**
@@ -44,13 +44,13 @@ public class ScoreScript {
 
     /**
      * Requete SQL qui permet de recuperer le score d'un joueur sur une categorie
-     * @param userId : l'id du joueur
+     * @param userEmail : l'email du joueur
      * @param categoryId : l'id de la categorie
      * @return la requete SQL
      */
-    public static final String selectByUserIdAndCategoryIdQuery(long userId, long categoryId){
+    public static final String selectByUserIdAndCategoryIdQuery(String userEmail, long categoryId){
         return "SELECT  * FROM " + TABLE_NAME
-                + " WHERE " + COLUMN_SCORE_USERID + "=" + userId
+                + " WHERE " + COLUMN_SCORE_USER_EMAIL + "=\"" + userEmail + "\""
                 + " AND " + COLUMN_SCORE_CATEGORYID + "=" + categoryId;
 
     }
@@ -59,7 +59,7 @@ public class ScoreScript {
      * Requete SQL qui permet de récupérer l'id max de la table
      * @return La requete SQL
      */
-    public static final String selectMaxScoreId(){
+    public static final String selectMaxId(){
         return "SELECT  MAX(" + COLUMN_SCORE_ID + ") FROM " + TABLE_NAME;
     }
 

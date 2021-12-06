@@ -44,12 +44,13 @@
     <string name="login">Login</string>
     <!-- ################ - ACCOUNT CREATION - ####################### -->
     <string name="create_account">Create your account</string>
-    <string name="password">password</string>
-    <string name="username">username</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
     <string name="create_account_button">Create</string>
     <!-- ################ - SELECT CATEGORY  - ####################### -->
     <string name="select_category">Select a category</string>
-    <string name="add_question">Add a question</string>
+    <string name="add_question">Add a question </string>
     <!-- ################ - ADD A QUESTION   - ####################### -->
     <string name="new_question">New question</string>
     <string name="answers">Answers</string>
@@ -57,7 +58,7 @@
     <string name="new_answer_2">Answer 2</string>
     <string name="new_answer_3">Answer 3</string>
     <string name="new_answer_4">Answer 4</string>
-    <string name="choose_good_answer">Choose the good answer</string>
+    <string name="choose_good_answer">Choose the correct answer</string>
     <string name="validate_question">Add this question</string>
     <string name="choosed_category">choosed Cat.</string>
     <string name="categorie1">General Culture</string>

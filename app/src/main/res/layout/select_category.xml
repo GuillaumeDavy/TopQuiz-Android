@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".controller.SelectCategoryActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textViewSelectCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="@string/select_category"
+        android:textSize="32dp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/textview_ScoreMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:text=""
+        android:textSize="32dp" />
+
+    <Spinner
+        android:id="@+id/spinnerSelectCategory"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="24dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+    </Spinner>
+
+    <Button
+        android:id="@+id/buttonPlaySelectCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:text="@string/lets_play"
+        android:textSize="24dp"></Button>
+
+    <Button
+        android:id="@+id/buttonAddQuestionSelectCategory"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_height="wrap_content"
+        android:text="@string/add_question"
+        android:textSize="24dp"/>
+
+</LinearLayout>

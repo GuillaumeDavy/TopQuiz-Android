@@ -11,6 +11,12 @@
         android:theme="@style/Theme.TopQuiz"
         android:name=".App">
         <activity
+            android:name=".controller.SelectCategoryActivity"
+            android:exported="true" />
+         <activity
+            android:name=".controller.CreateAccountActivity"
+            android:exported="true" />
+        <activity
             android:name=".controller.GameActivity"
             android:exported="false" />
         <activity

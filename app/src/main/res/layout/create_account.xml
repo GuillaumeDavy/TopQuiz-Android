@@ -1,76 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".controller.CreateAccountActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewCreateAccount"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="41dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginBottom="114dp"
-        android:textSize="32dp"
-        android:gravity="center"
-        android:text="@string/create_account"
-        app:layout_constraintBottom_toTopOf="@+id/editTextUsernameCreateAccount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonCreateAccount"
-        android:layout_width="250dp"
-        android:layout_height="75dp"
-        android:layout_marginBottom="216dp"
-        android:textSize="24dp"
-        android:text="@string/create_account_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextConfirmPasswordCreateAccount" />
 
     <EditText
         android:id="@+id/editTextUsernameCreateAccount"
-        android:layout_width="228dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="22dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
-        android:inputType="textPersonName"
         android:hint="@string/username"
-        app:layout_constraintBottom_toTopOf="@+id/editTextPasswordCreateAccount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCreateAccount" />
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editTextEmailCreateAccount"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/editTextPasswordCreateAccount"
-        android:layout_width="228dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginBottom="10dp"
         android:ems="10"
-        android:inputType="textPassword"
         android:hint="@string/password"
-        app:layout_constraintBottom_toTopOf="@+id/editTextConfirmPasswordCreateAccount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameCreateAccount"
-        tools:ignore="MissingConstraints" />
+        android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/editTextConfirmPasswordCreateAccount"
-        android:layout_width="228dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="43dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="15dp"
         android:ems="10"
-        android:inputType="textPassword"
         android:hint="@string/password"
-        app:layout_constraintBottom_toTopOf="@+id/buttonCreateAccount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordCreateAccount"
-        tools:ignore="MissingConstraints" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@color/error_red"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="" />
+
+    <Button
+        android:id="@+id/buttonCreateAccount"
+        android:layout_width="178dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="15dp"
+        android:text="@string/create_account_button"
+        android:textSize="24dp" />
+
+</LinearLayout>

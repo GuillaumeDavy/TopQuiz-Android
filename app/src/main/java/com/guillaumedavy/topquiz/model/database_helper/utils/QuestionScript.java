@@ -28,6 +28,11 @@ public class QuestionScript {
         return "SELECT  * FROM " + TABLE_NAME;
     }
 
+    public static final String selectAllQuestionForCategoryId(long categoryId){
+        return "SELECT  * FROM " + TABLE_NAME
+                + " WHERE " + COLUMN_QUESTION_CATEGORY_ID + "=" + categoryId;
+    }
+
     public static final String countAllQuery(){
         return "SELECT  * FROM " + TABLE_NAME;
     }

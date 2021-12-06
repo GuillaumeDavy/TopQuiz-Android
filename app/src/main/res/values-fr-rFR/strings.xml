@@ -44,12 +44,13 @@
     <string name="login">Se connecter</string>
     <!-- ################ - ACCOUNT CREATION - ####################### -->
     <string name="create_account">Crée ton nouveau compte</string>
-    <string name="password">mot de passe</string>
-    <string name="username">pseudo</string>
+    <string name="password">Mot de passe</string>
+    <string name="username">Nom d\'utilisateur</string>
+    <string name="email">Email</string>
     <string name="create_account_button">Créer</string>
     <!-- ################ - SELECT CATEGORY  - ####################### -->
     <string name="select_category">Choisi une catégorie</string>
-    <string name="add_question">Ajouter une question</string>
+    <string name="add_question">Ajouter une question </string>
     <!-- ################ - ADD A QUESTION   - ####################### -->
     <string name="new_question">Nouvelle question</string>
     <string name="answers">Réponses</string>

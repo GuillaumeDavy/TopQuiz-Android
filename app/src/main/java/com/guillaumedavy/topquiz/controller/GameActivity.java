@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
@@ -26,9 +27,12 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
+    public static final String CATEGORY = "CATEGORY";
     public static final int NUMBER_OF_QUESTIONS = 4;
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
     public static final String BUNDLE_STATE_QUESTION_COUNT = "BUNDLE_STATE_QUESTION_COUNT";
@@ -45,6 +49,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int mRemainingQuestionCount;
     private boolean mEnableTouchEvents;
     private Player mUser;
+    private String mCategory;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -66,36 +71,48 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
 
         Intent intent = getIntent();
-        if(intent.hasExtra(USER)){
+        if(intent.hasExtra(USER) && intent.hasExtra(CATEGORY)){
             mUser = intent.getParcelableExtra(USER);
-            System.out.println("Game " + mUser);
+            mCategory = intent.getStringExtra(CATEGORY);
+            System.out.println("Game --> " + mUser + ", Category : " + mCategory);
         }
 
-        if(savedInstanceState != null){
-            mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
-            mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
-            mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
-            mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
-        } else {
-            //Game initialisation
-            mQuestionBank = generateQuestionBank();
-            mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        try {
+            db.getWritableDatabase();
+            Category category = db.getCategoryByName(mCategory);
+
+            if(savedInstanceState != null){
+                mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
+                mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
+                mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
+                mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
+            } else {
+                //Game initialisation
+                mQuestionBank = generateQuestionBank(category);
+                mRemainingQuestionCount = NUMBER_OF_QUESTIONS;
+            }
+
+            mQuestionTextView = findViewById(R.id.game_activity_textview_question);
+            mResponseOneButton = findViewById(R.id.game_activity_button_1);
+            mResponseTwoButton = findViewById(R.id.game_activity_button_2);
+            mResponseThreeButton = findViewById(R.id.game_activity_button_3);
+            mResponseFourButton = findViewById(R.id.game_activity_button_4);
+
+            mResponseOneButton.setOnClickListener(this);
+            mResponseTwoButton.setOnClickListener(this);
+            mResponseThreeButton.setOnClickListener(this);
+            mResponseFourButton.setOnClickListener(this);
+
+            mEnableTouchEvents = true;
+
+            displayQuestion(mQuestionBank.getCurrentQuestion());
+
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
         }
-
-        mQuestionTextView = findViewById(R.id.game_activity_textview_question);
-        mResponseOneButton = findViewById(R.id.game_activity_button_1);
-        mResponseTwoButton = findViewById(R.id.game_activity_button_2);
-        mResponseThreeButton = findViewById(R.id.game_activity_button_3);
-        mResponseFourButton = findViewById(R.id.game_activity_button_4);
-
-        mResponseOneButton.setOnClickListener(this);
-        mResponseTwoButton.setOnClickListener(this);
-        mResponseThreeButton.setOnClickListener(this);
-        mResponseFourButton.setOnClickListener(this);
-
-        mEnableTouchEvents = true;
-
-        displayQuestion(mQuestionBank.getCurrentQuestion());
     }
 
     @Override
@@ -144,16 +161,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Affichage de fin de jeu et retour vers mainActivity
+     * Affichage de fin de jeu et retour vers SelectCategoryActivity
      */
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
                 .setMessage(getString(R.string.score_content_label) + " " + mUser.getScore())
                 .setPositiveButton(getString(R.string.score_button_label), (dialog, which) -> {
-                    Intent intent = new Intent();
-                    intent.putExtra(USER, mUser);
-                    setResult(RESULT_OK, intent);
+                    Intent SelectCategoryActivity = new Intent(GameActivity.this, SelectCategoryActivity.class);
+                    SelectCategoryActivity.putExtra(USER, mUser);
+                    setResult(RESULT_OK, SelectCategoryActivity);
                     finish();
                 })
                 .create()
@@ -165,12 +182,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @return la banque de questions
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private QuestionBank generateQuestionBank(){
+    private QuestionBank generateQuestionBank(Category category){
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        db.createDefaultCategoriesAndQuestionsIfNeed();
-        db.getAllCategories().forEach(System.out::println);
-        return new QuestionBank(db.getAllQuestions());
+        db.createDefaultQuestionsIfNeeded();
+        return new QuestionBank(db.getQuestionsForCategory(category));
     }
 }
