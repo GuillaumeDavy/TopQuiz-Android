@@ -7,65 +7,69 @@
     android:orientation="vertical"
     android:padding="8dp">
 
+    <ProgressBar
+        android:id="@+id/progressBarQuestions"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_height="50dp" />
+
     <TextView
         android:id="@+id/game_activity_textview_question"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:layout_weight="4"
+        android:layout_height="wrap_content"
+        android:minHeight="150dp"
+        android:layout_margin="16dp"
         android:background="@color/teal_700"
+        android:padding="8dp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="20dp"
         android:textStyle="bold"
         tools:text="Question?"
         />
 
     <Button
         android:id="@+id/game_activity_button_1"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:padding="16dp"
-        android:textSize="20sp"
+        android:layout_marginHorizontal="16dp"
+        android:textSize="16dp"
         tools:text="Answer1"
         />
 
     <Button
         android:id="@+id/game_activity_button_2"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:padding="16dp"
-        android:textSize="20sp"
+        android:layout_marginHorizontal="16dp"
+        android:minHeight="60dp"
+        android:textSize="16dp"
         tools:text="Answer2"
         />
 
     <Button
         android:id="@+id/game_activity_button_3"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:padding="16dp"
-        android:textSize="20sp"
+        android:layout_marginHorizontal="16dp"
+        android:minHeight="60dp"
+        android:textSize="16dp"
         tools:text="Answer3"
         />
 
     <Button
         android:id="@+id/game_activity_button_4"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:padding="16dp"
-        android:textSize="20sp"
+        android:layout_marginHorizontal="16dp"
+        android:minHeight="60dp"
+        android:textSize="16dp"
         tools:text="Answer4"
         />
 

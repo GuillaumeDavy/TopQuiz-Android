@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Button mResponseTwoButton;
     private Button mResponseThreeButton;
     private Button mResponseFourButton;
+    private ProgressBar mProgressBar;
 
     //Game attributs
     private QuestionBank mQuestionBank;
@@ -99,6 +101,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             mResponseThreeButton = findViewById(R.id.game_activity_button_3);
             mResponseFourButton = findViewById(R.id.game_activity_button_4);
 
+            //Gestion de la progressBar
+            mProgressBar = findViewById(R.id.progressBarQuestions);
+            mProgressBar.setIndeterminate(false);
+            mProgressBar.setMax(NUMBER_OF_QUESTIONS);
+
             mResponseOneButton.setOnClickListener(this);
             mResponseTwoButton.setOnClickListener(this);
             mResponseThreeButton.setOnClickListener(this);
@@ -141,6 +148,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 //Question suivante ou fin de jeu
                 mRemainingQuestionCount--;
+                mProgressBar.setProgress(mProgressBar.getMax() - mRemainingQuestionCount);
                 if(mRemainingQuestionCount > 0){
                     displayQuestion(mQuestionBank.getNextQuestion());
                 } else {
