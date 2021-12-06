@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
+import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.User;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
@@ -24,9 +27,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SelectCategoryActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
+    private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
+    private static final int ADD_QUESTION_REQUEST_CODE = 45;
     public static final String USER = "USER";
     public static final String CATEGORY = "CATEGORY";
 
@@ -35,11 +41,14 @@ public class SelectCategoryActivity extends AppCompatActivity {
     private Button mButtonPlay;
     private Button mButtonQuestion;
     private TextView mTextViewScoreMessage;
+    private ListView mLeaderBoard;
+    private TextView mTextViewLeaderboardEmpty;
+    private TextView mTextViewLeaderboardTitle;
+    private TextView mYourScoreTextView;
 
     //Fields
     private Player mPlayer = new Player();
     private List<String> mCategoryList = new ArrayList<>();
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -83,9 +92,15 @@ public class SelectCategoryActivity extends AppCompatActivity {
         }
 
         mSpinnerCategories = findViewById(R.id.spinnerSelectCategory);//dropdown
+        mLeaderBoard = findViewById(R.id.leaderboard_list_view); //Listview
         mButtonPlay = findViewById(R.id.buttonPlaySelectCategory);
         mButtonQuestion = findViewById(R.id.buttonAddQuestionSelectCategory);
         mTextViewScoreMessage = findViewById(R.id.textview_ScoreMessage);
+        mTextViewLeaderboardTitle = findViewById(R.id.leaderboard_text_view);
+        mTextViewLeaderboardEmpty = findViewById(R.id.leaderboard_empty_text_view);
+        mYourScoreTextView = findViewById(R.id.your_best_score_text_view);
+
+        mYourScoreTextView.setText(getString(R.string.no_score_yet));
 
         //N'affiche pas le bouton d'ajout de question si pas admin + recupère les catégories
         TopQuizDBHelper db = new TopQuizDBHelper(this);
@@ -95,38 +110,99 @@ public class SelectCategoryActivity extends AppCompatActivity {
             if(maybeUser.isPresent() && !maybeUser.get().isAdmin()){
                 mButtonQuestion.setVisibility(View.GONE);
             }
+
             //Convertion List<Category> vers List<String> en recuperant le nom de chaque category
             mCategoryList = db.getAllCategories()
                     .stream()
                     .map(Category::getName)
                     .collect(Collectors.toList());
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, mCategoryList.toArray(new String[0]));
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSpinnerCategories.setAdapter(adapter);
+
+            //Lorsqu'un element du dropdown est choisi
+            mSpinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String itemSelected = mSpinnerCategories.getSelectedItem().toString();
+                    Category category = db.getCategoryByName(itemSelected);
+                    List<String> leaderboardList = db.getTop3ScoreByCategoryId(category.getId())
+                            .stream()
+                            .map(score -> new Player(score.getUser().getUsername(), score.getScore()).toString())
+                            .collect(Collectors.toList());
+                    if(maybeUser.isPresent()){
+                        Score myBestScore = db.getScoreByUserEmailAndCategoryId(maybeUser.get().getEmail(), db.getCategoryByName(itemSelected).getId());
+                        if(myBestScore.getScore() != 0){
+                            mYourScoreTextView.setText("Your best score : " + String.valueOf(myBestScore.getScore()) + "pts");
+                        } else {
+                            mYourScoreTextView.setText(getString(R.string.no_score_yet));
+                        }
+                        setItemsInLeaderboard(leaderboardList);
+                    }
+                    if(leaderboardList.isEmpty()){
+                        mLeaderBoard.setVisibility(View.GONE);
+                        mTextViewLeaderboardTitle.setVisibility(View.GONE);
+                        mTextViewLeaderboardEmpty.setVisibility(View.VISIBLE);
+                    } else {
+                        mLeaderBoard.setVisibility(View.VISIBLE);
+                        mTextViewLeaderboardTitle.setVisibility(View.VISIBLE);
+                        mTextViewLeaderboardEmpty.setVisibility(View.GONE);
+                        setItemsInLeaderboard(leaderboardList);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            mButtonPlay.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * Appelée lorsqu'un clique est réalisé sur le button play
+                 * @param v
+                 */
+                @Override
+                public void onClick(View v) {
+                    Intent gameActivity = new Intent(SelectCategoryActivity.this, GameActivity.class);
+
+                    gameActivity.putExtra(CATEGORY, mSpinnerCategories.getSelectedItem().toString());//on lui donne la categorie choisie
+                    gameActivity.putExtra(USER, mPlayer);//on lui donne le user
+                    startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
+                }
+            });
+
+            mButtonQuestion.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * Appelée lorsqu'un clique est réalisé sur le button question
+                 * @param v
+                 */
+                @Override
+                public void onClick(View v) {
+                    Intent questionActivity = new Intent(SelectCategoryActivity.this, AddQuestionActivity.class);
+                    questionActivity.putExtra(CATEGORY, mSpinnerCategories.getSelectedItem().toString());//on lui donne la categorie choisie
+                    startActivityForResult(questionActivity, ADD_QUESTION_REQUEST_CODE);
+                }
+            });
         } catch (Exception e){
             throw e;
         } finally {
             db.close();
         }
+    }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, mCategoryList.toArray(new String[0]));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerCategories.setAdapter(adapter);
+    /**
+     * Ajoute les joueurs au classement
+     * @param leaderboardList
+     */
+    private void setItemsInLeaderboard(List<String> leaderboardList){
+        String[] leaderboardArray = new String[leaderboardList.size()];
+        leaderboardList.toArray(leaderboardArray);
 
-        mButtonPlay.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Appelée lorsqu'un clique est réalisé sur le button play
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                Intent GameActivity = new Intent(SelectCategoryActivity.this, GameActivity.class);
-
-                GameActivity.putExtra(CATEGORY, mSpinnerCategories.getSelectedItem().toString());//on lui donne la categorie choisie
-                GameActivity.putExtra(USER, mPlayer);//on lui donne le user
-                //System.out.println("catégorie choisie :  " + mSpinnerCategories.getSelectedItem().toString());
-                startActivityForResult(GameActivity, GAME_ACTIVITY_REQUEST_CODE);
-            }
-        });
-
-
+        ArrayAdapter<String> adapter
+                = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1 , leaderboardArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+        mLeaderBoard.setAdapter(adapter);
     }
 }

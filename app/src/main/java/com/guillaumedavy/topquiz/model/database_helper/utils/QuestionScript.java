@@ -33,6 +33,14 @@ public class QuestionScript {
                 + " WHERE " + COLUMN_QUESTION_CATEGORY_ID + "=" + categoryId;
     }
 
+    /**
+     * Requete SQL qui permet de récupérer l'id max de la table
+     * @return La requete SQL
+     */
+    public static final String selectMaxId(){
+        return "SELECT  MAX(" + COLUMN_QUESTION_ID + ") FROM " + TABLE_NAME;
+    }
+
     public static final String countAllQuery(){
         return "SELECT  * FROM " + TABLE_NAME;
     }

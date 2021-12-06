@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Path;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -28,7 +27,7 @@ import java.util.Optional;
 
 public class TopQuizDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 15;
     private static final String DATABASE_NAME = "TOPQUIZ_DATABASE";
 
 
@@ -443,7 +442,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @return les scores d'une catégorie
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<Score> getAllScoreByCategoryId(long id){
+    public List<Score> getTop3ScoreByCategoryId(long id){
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(ScoreScript.selectByCategoryIdQuery(id), null);
@@ -481,17 +480,17 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             Optional<Score> maybeScore = this.getUserByEmail(cursor.getString(1))
                     .map(user -> new Score(
-                            cursor.getLong(0),      //ID
-                            user, //USER
-                            this.getCategoryById(cursor.getLong(2)), //CATEGORY
-                            cursor.getInt(3)       //SCORE
+                            cursor.getLong(0),                          //ID
+                            user,                                                   //USER
+                            this.getCategoryById(cursor.getLong(2)),    //CATEGORY
+                            cursor.getInt(3)                            //SCORE
                     ));
             cursor.close();
             return maybeScore.orElseThrow(() -> new SQLException("Impossible to get Score"));
         }
         //Crée un score initialisé à 0
         //Recupère l'id max de la table score
-        Optional<Score> maybeScore = this.getUserByEmail(cursor.getString(1))
+        Optional<Score> maybeScore = this.getUserByEmail(userEmail)
                 .map(user -> {
                     long id = this.getMaxScoreId();
                     return new Score(
@@ -762,6 +761,15 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public long getMaxScoreId(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(ScoreScript.selectMaxId(), null);
+        cursor.moveToFirst();
+        long id = cursor.getLong(0);
+        cursor.close();
+        return id;
+    }
+
+    public long getMaxQuestionId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(QuestionScript.selectMaxId(), null);
         cursor.moveToFirst();
         long id = cursor.getLong(0);
         cursor.close();
