@@ -169,7 +169,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        db.createDefaultCategoriesAndQuestionsIfNeed();
+        db.createDefaultQuestionsIfNeeded();
         db.getAllCategories().forEach(System.out::println);
         return new QuestionBank(db.getAllQuestions());
     }

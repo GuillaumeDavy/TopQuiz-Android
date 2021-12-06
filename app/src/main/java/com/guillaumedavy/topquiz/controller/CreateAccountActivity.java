@@ -1,6 +1,8 @@
 package com.guillaumedavy.topquiz.controller;
 
 import android.content.Intent;
+import android.database.SQLException;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.guillaumedavy.topquiz.R;
@@ -23,9 +26,10 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     // View elements
     private TextView mUsername;
     private TextView mEmail;
-    private Button mButtonCreate;
     private TextView mPassword;
     private TextView mPasswordConfirm;
+    private TextView mErrorTextView;
+    private Button mButtonCreate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         mEmail = findViewById(R.id.editTextEmailCreateAccount);
         mPassword = findViewById(R.id.editTextPasswordCreateAccount);
         mPasswordConfirm = findViewById(R.id.editTextConfirmPasswordCreateAccount);
+        mErrorTextView = findViewById(R.id.errorTextView);
         mButtonCreate = findViewById(R.id.buttonCreateAccount);
         mButtonCreate.setEnabled(false);
 
@@ -63,14 +68,10 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
         mPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -83,14 +84,10 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         });
         mPasswordConfirm.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -104,40 +101,42 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         });
         mButtonCreate.setOnClickListener(new View.OnClickListener() {
             /**
-             * TODO Enregistrer le USER en base
              * Appelée lorsqu'un clique est réalisé sur le button de creation
              * @param v
              */
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 Intent MainActivity = new Intent(CreateAccountActivity.this, MainActivity.class);
-                long userID = createUserAndAddInDB();
-                MainActivity.putExtra(EMAIL, mEmail.getText().toString());
-                setResult(RESULT_OK, MainActivity);
-
-                startActivity(MainActivity);
-                finish();
+                try {
+                    createUserAndAddInDB();
+                    MainActivity.putExtra(EMAIL, mEmail.getText().toString());
+                    setResult(RESULT_OK, MainActivity);
+                    startActivity(MainActivity);
+                    finish();
+                } catch (SQLException e) {
+                    mErrorTextView.setText(e.getMessage());
+                }
             }
         });
     }
 
     /**
      * Créer l'utilisateur et l'enregistre en base de donnée
-     * @return l'id du joueur crée
+     * @return l'email de l'utilisateur créé
      */
-    public long createUserAndAddInDB(){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public String createUserAndAddInDB(){
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        long id = db.getMaxUserId();
         User user = new User(
-                ++id,
+                mEmail.getText().toString(),
                 checkUserName(mUsername.getText().toString()),
                 mPassword.getText().toString(),
-                mEmail.getText().toString(),
                 false
         );
         db.addUser(user);
-        return id;
+        return user.getEmail();
     }
 
     /**
@@ -161,8 +160,10 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
      * @return si c'est ok
      */
     private boolean checkAccountPassword(){
-        //Active le button si il y a du text dans le TextEdit
-        return (mEmail.getText().toString().contains("@") && mPassword.getText().toString().equals(mPasswordConfirm.getText().toString()) && mPassword != null && mPasswordConfirm != null);
+        return mEmail.getText().toString().contains("@")
+                && mPassword.getText().toString().equals(mPasswordConfirm.getText().toString())
+                && mPassword != null
+                && mPasswordConfirm != null;
     }
 
     /**

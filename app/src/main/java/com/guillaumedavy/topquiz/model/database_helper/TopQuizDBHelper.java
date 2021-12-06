@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Path;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import com.guillaumedavy.topquiz.App;
 import com.guillaumedavy.topquiz.R;
@@ -20,10 +24,11 @@ import com.guillaumedavy.topquiz.model.database_helper.utils.UserScript;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TopQuizDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 12;
     private static final String DATABASE_NAME = "TOPQUIZ_DATABASE";
 
 
@@ -58,21 +63,24 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      */
     public void addQuestion(Question question) {
         SQLiteDatabase db = this.getWritableDatabase();
+        try{
+            ContentValues values = new ContentValues();
+            values.put(QuestionScript.COLUMN_QUESTION_VALUE, question.getQuestion());
+            values.put(QuestionScript.COLUMN_QUESTION_CATEGORY_ID, question.getCategory().getId());
+            values.put(QuestionScript.COLUMN_QUESTION_ANSWER1, question.getAnswer1());
+            values.put(QuestionScript.COLUMN_QUESTION_ANSWER2, question.getAnswer2());
+            values.put(QuestionScript.COLUMN_QUESTION_ANSWER3, question.getAnswer3());
+            values.put(QuestionScript.COLUMN_QUESTION_ANSWER4, question.getAnswer4());
+            values.put(QuestionScript.COLUMN_QUESTION_ANSWERNUMBER, question.getAnswerIndex());
 
-        ContentValues values = new ContentValues();
-        values.put(QuestionScript.COLUMN_QUESTION_VALUE, question.getQuestion());
-        values.put(QuestionScript.COLUMN_QUESTION_CATEGORY_ID, question.getCategory().getId());
-        values.put(QuestionScript.COLUMN_QUESTION_ANSWER1, question.getAnswer1());
-        values.put(QuestionScript.COLUMN_QUESTION_ANSWER2, question.getAnswer2());
-        values.put(QuestionScript.COLUMN_QUESTION_ANSWER3, question.getAnswer3());
-        values.put(QuestionScript.COLUMN_QUESTION_ANSWER4, question.getAnswer4());
-        values.put(QuestionScript.COLUMN_QUESTION_ANSWERNUMBER, question.getAnswerIndex());
-
-        // Inserting Row
-        db.insert(QuestionScript.TABLE_NAME, null, values);
-
-        // Closing database connection
-        db.close();
+            // Inserting Row
+            db.insert(QuestionScript.TABLE_NAME, null, values);
+        } catch (Exception e){
+            throw e;
+        } finally {
+            // Closing database connection
+            db.close();
+        }
     }
 
     /**
@@ -80,34 +88,32 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @return All the questions
      */
     public List<Question> getAllQuestions() {
-
         List<Question> questionList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = QuestionScript.selectAllQuery();
-
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(QuestionScript.selectAllQuery(), null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Question question = new Question(
+                            cursor.getLong(0),                      //ID
+                            this.getCategoryById(cursor.getInt(1)), //CATEGORY
+                            cursor.getString(2),                    //QUESTION
+                            cursor.getString(3),                    //ANSWER 1
+                            cursor.getString(4),                    //ANSWER 2
+                            cursor.getString(5),                    //ANSWER 3
+                            cursor.getString(6),                    //ANSWER 1
+                            cursor.getInt(7)                        //CORRECT ANSWER
+                    );
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Question question = new Question(
-                        cursor.getLong(0),      //ID
-                        this.getCategoryById(cursor.getInt(1)), //CATEGORY
-                        cursor.getString(2),    //QUESTION
-                        cursor.getString(3),    //ANSWER 1
-                        cursor.getString(4),    //ANSWER 2
-                        cursor.getString(5),    //ANSWER 3
-                        cursor.getString(6),    //ANSWER 1
-                        cursor.getInt(7)        //CORRECT ANSWER
-                );
-
-                // Adding question to list
-                questionList.add(question);
-            } while (cursor.moveToNext());
+                    // Adding question to list
+                    questionList.add(question);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
-        // return note list
         return questionList;
     }
 
@@ -116,24 +122,24 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @return All the users
      */
     public List<User> getAllUsers() {
-
         List<User> userList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(UserScript.selectAllQuery(), null);
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                User user = new User(
-                        cursor.getLong(0),              //ID
-                        cursor.getString(1),            //USERNAME
-                        cursor.getString(2),            //PASSWORD
-                        cursor.getString(3),            //EMAIL
-                        cursor.getInt(4) == 1   //ISADMIN
-                );
-
-                userList.add(user);
-            } while (cursor.moveToNext());
+        try{
+            if (cursor.moveToFirst()) {
+                do {
+                    User user = new User(
+                            cursor.getString(0),            //EMAIL
+                            cursor.getString(1),            //USERNAME
+                            cursor.getString(2),            //PASSWORD
+                            cursor.getInt(3) == 1   //ISADMIN
+                    );
+                    userList.add(user);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
         return userList;
@@ -142,67 +148,69 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     /**
      * Get a user by email
      * @param email l'email de l'utilisateur recherché
-     * @return un utilisateur
+     * @return un utilisateur ou throw une exeption si non existant
      */
-    public User getUserByEmail(String email){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Optional<User> getUserByEmail(String email){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(UserScript.selectUserByEmail(email), null);
-
         if (cursor.moveToFirst()) {
             User user = new User(
-                    cursor.getLong(0),              //ID
+                    cursor.getString(0),            //EMAIL
                     cursor.getString(1),            //USERNAME
                     cursor.getString(2),            //PASSWORD
-                    cursor.getString(3),            //EMAIL
-                    cursor.getInt(4) == 1   //ISADMIN
+                    cursor.getInt(3) == 1   //ISADMIN
             );
             cursor.close();
-            return user;
+            return Optional.of(user);
         }
-        throw new SQLException("No match for user email=" + email);
+        cursor.close();
+        return Optional.empty();
     }
 
     /**
-     * Get a user by email
-     * @param id l'id de l'utilisateur recherché
-     * @return un utilisateur
+     * Vérifie si le mot de passe est correct.
+     * S'il ne l'est pas, lève une exception
+     * @param email l'email de l'utilisateur
+     * @param password le mot de passe à vérifier
      */
-    public User getUserById(long id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(UserScript.selectUserById(id), null);
-
-        if (cursor.moveToFirst()) {
-            User user = new User(
-                    cursor.getLong(0),              //ID
-                    cursor.getString(1),            //USERNAME
-                    cursor.getString(2),            //PASSWORD
-                    cursor.getString(3),            //EMAIL
-                    cursor.getInt(4) == 1   //ISADMIN
-            );
-            cursor.close();
-            return user;
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void tryLogIn(String email, String password){
+        Optional<User> maybeUser = this.getUserByEmail(email);
+        if(!maybeUser.isPresent() || !password.equals(maybeUser.get().getPassword())){
+            throw new SQLException("Incorrect email or password");
         }
-        throw new SQLException("No match for user id=" + id);
     }
 
     /**
-     * Insert a user into the database
+     * Insert a user into the database,
+     * if getUserByEmail does not throw, add user
+     * else throw SQLException user already exists
      * @param user : Objet User
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
+        Optional<User> maybeUser = this.getUserByEmail(user.getEmail());
+        if(maybeUser.isPresent() && user.getEmail().equals(maybeUser.get().getEmail())){
+            db.close();
+            throw new SQLException("User already exists");
+        }
+        try{
+            ContentValues values = new ContentValues();
+            values.put(UserScript.COLUMN_USER_NAME, user.getUsername());
+            values.put(UserScript.COLUMN_USER_PASSWORD, user.getPassword());
+            values.put(UserScript.COLUMN_USER_EMAIL, user.getEmail());
+            values.put(UserScript.COLUMN_USER_ISADMIN, user.isAdmin() ? 1 : 0); //1 si admin 0 sinon
 
-        ContentValues values = new ContentValues();
-        values.put(UserScript.COLUMN_USER_NAME, user.getUsername());
-        values.put(UserScript.COLUMN_USER_PASSWORD, user.getPassword());
-        values.put(UserScript.COLUMN_USER_EMAIL, user.getEmail());
-        values.put(UserScript.COLUMN_USER_ISADMIN, user.isAdmin() ? 1 : 0); //1 si admin 0 sinon
-
-        // Inserting Row
-        db.insert(UserScript.TABLE_NAME, null, values);
-
-        // Closing database connection
-        db.close();
+            // Inserting Row
+            db.insert(UserScript.TABLE_NAME, null, values);
+        } catch (Exception e){
+            throw e;
+        } finally {
+            // Closing database connection
+            db.close();
+        }
     }
 
     /**
@@ -212,14 +220,16 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public void addCategory(Category category) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(CategorieScript.COLUMN_CATEGORIE_NAME, category.getName());
+        try{
+            ContentValues values = new ContentValues();
+            values.put(CategorieScript.COLUMN_CATEGORIE_NAME, category.getName());
 
-        // Inserting Row
-        db.insert(CategorieScript.TABLE_NAME, null, values);
-
-        // Closing database connection
-        db.close();
+            db.insert(CategorieScript.TABLE_NAME, null, values);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            db.close();
+        }
     }
 
     /**
@@ -227,23 +237,26 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @return All the questions
      */
     public List<Category> getAllCategories() {
-
         List<Category> categoryList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(CategorieScript.selectAllQuery(), null);
+        try{
+            if (cursor.moveToFirst()) {
+                do {
+                    Category category = new Category(
+                            cursor.getLong(0),      //ID
+                            cursor.getString(1)     //NAME
+                    );
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Category category = new Category(
-                        cursor.getLong(0),      //ID
-                        cursor.getString(1)     //NAME
-                );
-
-                categoryList.add(category);
-            } while (cursor.moveToNext());
+                    categoryList.add(category);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
+
         return categoryList;
     }
 
@@ -264,6 +277,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
             cursor.close();
             return category;
         }
+        cursor.close();
         throw new SQLException("No match for category id=" + id);
     }
 
@@ -271,19 +285,21 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * Insert a score into the database
      * @param score : Objet Score
      */
-    public void addScore(Score score) {
+    private void addScore(Score score) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(ScoreScript.COLUMN_SCORE_USERID, score.getUser().getId());
-        values.put(ScoreScript.COLUMN_SCORE_CATEGORYID, score.getCategory().getId());
-        values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
+        try{
+            ContentValues values = new ContentValues();
+            values.put(ScoreScript.COLUMN_SCORE_USER_EMAIL, score.getUser().getEmail());
+            values.put(ScoreScript.COLUMN_SCORE_CATEGORYID, score.getCategory().getId());
+            values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
 
-        // Inserting Row
-        db.insert(ScoreScript.TABLE_NAME, null, values);
-
-        // Closing database connection
-        db.close();
+            db.insert(ScoreScript.TABLE_NAME, null, values);
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
+        }
     }
 
     /**
@@ -293,36 +309,47 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      */
     public int updateScore(Score score){
         SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(ScoreScript.COLUMN_SCORE_USERID, score.getUser().getId());
-        values.put(ScoreScript.COLUMN_SCORE_CATEGORYID, score.getCategory().getId());
-        values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
-
-        // updating row
-        return db.update(ScoreScript.TABLE_NAME, values, ScoreScript.COLUMN_SCORE_ID + " = ?",
-                new String[]{String.valueOf(score.getId())});
+        int rowUpdated = 0;
+        try{
+            ContentValues values = new ContentValues();
+            values.put(ScoreScript.COLUMN_SCORE_USER_EMAIL, score.getUser().getEmail());
+            values.put(ScoreScript.COLUMN_SCORE_CATEGORYID, score.getCategory().getId());
+            values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
+            rowUpdated = db.update(ScoreScript.TABLE_NAME, values, ScoreScript.COLUMN_SCORE_ID + " = ?",
+                    new String[]{String.valueOf(score.getId())});
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
+        }
+        return rowUpdated;
     }
 
     /**
      * retroune la liste de tous les scores disponibles
      * @return All the score
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Score> getAllScores() {
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(ScoreScript.selectAllQuery(), null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                Score score = new Score(
-                        cursor.getLong(0),      //ID
-                        this.getUserById(cursor.getLong(1)), //USER
-                        this.getCategoryById(cursor.getLong(2)), //CATEGORY
-                        cursor.getInt(3)       //SCORE
-                );
-                scoreList.add(score);
-            } while (cursor.moveToNext());
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    this.getUserByEmail(cursor.getString(1))
+                            .map(user -> new Score(
+                                    cursor.getLong(0),                          //ID
+                                    user,                                                  //USER
+                                    this.getCategoryById(cursor.getLong(2)),    //CATEGORY
+                                    cursor.getInt(3)                            //SCORE
+                            )).ifPresent(scoreList::add);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
         return scoreList;
@@ -330,23 +357,29 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
 
     /**
      * retourne la liste des scores pour un utilisateur
-     * @param id : id de l'utilisateur
+     * @param email : email de l'utilisateur
      * @return les scores d'un joueur
      */
-    public List<Score> getAllScoreByUserId(long id){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public List<Score> getAllScoreByUserEmail(String email){
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(ScoreScript.selectByUserIdQuery(id), null);
-        if(cursor.moveToFirst()){
-            do {
-                Score score = new Score(
-                        cursor.getLong(0),      //ID
-                        this.getUserById(cursor.getLong(1)), //USER
-                        this.getCategoryById(cursor.getLong(2)), //CATEGORY
-                        cursor.getInt(3)       //SCORE
-                );
-                scoreList.add(score);
-            } while (cursor.moveToNext());
+        Cursor cursor = db.rawQuery(ScoreScript.selectByUserEmailQuery(email), null);
+        try{
+            if(cursor.moveToFirst()){
+                do {
+                    this.getUserByEmail(cursor.getString(1))
+                            .map(user -> new Score(
+                                    cursor.getLong(0),                          //ID
+                                    user,                                                  //USER
+                                    this.getCategoryById(cursor.getLong(2)),    //CATEGORY
+                                    cursor.getInt(3)                            //SCORE
+                            )).ifPresent(scoreList::add);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
         return scoreList;
@@ -357,20 +390,26 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @param id : id de la categorie
      * @return les scores d'une catégorie
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Score> getAllScoreByCategoryId(long id){
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(ScoreScript.selectByCategoryIdQuery(id), null);
-        if(cursor.moveToFirst()){
-            do {
-                Score score = new Score(
-                        cursor.getLong(0),      //ID
-                        this.getUserById(cursor.getLong(1)), //USER
-                        this.getCategoryById(cursor.getLong(2)), //CATEGORY
-                        cursor.getInt(3)       //SCORE
-                );
-                scoreList.add(score);
-            } while (cursor.moveToNext());
+        try{
+            if(cursor.moveToFirst()){
+                do {
+                    this.getUserByEmail(cursor.getString(1))
+                            .map(user -> new Score(
+                                    cursor.getLong(0),                          //ID
+                                    user,                                                  //USER
+                                    this.getCategoryById(cursor.getLong(2)),    //CATEGORY
+                                    cursor.getInt(3)                            //SCORE
+                            )).ifPresent(scoreList::add);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
             cursor.close();
         }
         return scoreList;
@@ -379,44 +418,57 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     /**
      * retourne le score pour un utilisateur pour une categorie,
      * s'il n'existe pas, il le créé
-     * @param userId : l'id du joueur
+     * @param userEmail : l'email du joueur
      * @param categoryId : l'id de la categorie
      * @return Score
      */
-    public Score getScoreByUserIdAndCategoryId(long userId, long categoryId){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Score getScoreByUserEmailAndCategoryId(String userEmail, long categoryId){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(ScoreScript.selectByUserIdAndCategoryIdQuery(userId, categoryId), null);
+        Cursor cursor = db.rawQuery(ScoreScript.selectByUserIdAndCategoryIdQuery(userEmail, categoryId), null);
         if(cursor.moveToFirst()){
-            return new Score(
-                    cursor.getLong(0),      //ID
-                    this.getUserById(cursor.getLong(1)), //USER
-                    this.getCategoryById(cursor.getLong(2)), //CATEGORY
-                    cursor.getInt(3)       //SCORE
-            );
+            Optional<Score> maybeScore = this.getUserByEmail(cursor.getString(1))
+                    .map(user -> new Score(
+                            cursor.getLong(0),      //ID
+                            user, //USER
+                            this.getCategoryById(cursor.getLong(2)), //CATEGORY
+                            cursor.getInt(3)       //SCORE
+                    ));
+            cursor.close();
+            return maybeScore.orElseThrow(() -> new SQLException("Impossible to get Score"));
         }
         //Crée un score initialisé à 0
         //Recupère l'id max de la table score
-        long id = this.getMaxScoreId();
-        Score score = new Score(
-                ++id,
-                this.getUserById(userId),
-                this.getCategoryById(categoryId),
-                0
-        );
+        Optional<Score> maybeScore = this.getUserByEmail(cursor.getString(1))
+                .map(user -> {
+                    long id = this.getMaxScoreId();
+                    return new Score(
+                            ++id,      //ID
+                            user, //USER
+                            this.getCategoryById(categoryId), //CATEGORY
+                            0      //SCORE
+                    );
+                });
+        cursor.close();
+        Score score = maybeScore.orElseThrow(() -> new SQLException("Impossible to get Score"));
         this.addScore(score);
         return score;
     }
 
     /**
+     * Create default Categories
+     */
+    public void createDefaultCategoriesIfNeeded(){
+        if(this.getCategoriesCount() == 0){
+            this.addCategory(new Category(1, App.getContext().getResources().getString(R.string.categorie1)));
+            this.addCategory(new Category(2, App.getContext().getResources().getString(R.string.categorie2)));
+        }
+    }
+
+    /**
      * Create default questions
      */
-    public void createDefaultCategoriesAndQuestionsIfNeed() {
-        if(this.getCategoriesCount() == 0){
-            Category cultureGenerale = new Category(1, App.getContext().getResources().getString(R.string.categorie1));
-            Category sport = new Category(2, App.getContext().getResources().getString(R.string.categorie2));
-            this.addCategory(cultureGenerale);
-            this.addCategory(sport);
-        }
+    public void createDefaultQuestionsIfNeeded() {
         if(this.getQuestionsCount() == 0) {
             Category cultureGenerale = this.getCategoryById(1);
             Category sport = this.getCategoryById(2);
@@ -498,22 +550,12 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     /**
      * Create one admin and one user
      */
-    public void createDefaultUsers(){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void createDefaultUsersIfNeeded(){
         if(this.getUserCount() == 0){
-            User admin = new User(1,"admin", "admin", "admin@email.fr", true);
-            User user = new User(2,"user", "user", "user@email.fr", false);
-            this.addUser(admin);
-            this.addUser(user);
+            this.addUser(new User("admin@email.fr","admin", "admin", true));
+            this.addUser(new User("user@email.fr","user", "user", false));
         }
-    }
-
-    public long getMaxUserId(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(UserScript.selectMaxId(), null);
-        cursor.moveToFirst();
-        long id = cursor.getLong(0);
-        cursor.close();
-        return id;
     }
 
     public long getMaxScoreId(){
