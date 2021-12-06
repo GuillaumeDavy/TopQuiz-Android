@@ -5,9 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,13 +21,8 @@ import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.QuestionBank;
-import com.guillaumedavy.topquiz.model.User;
+import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String USER = "USER";
@@ -144,6 +137,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mEnableTouchEvents = false;
 
         new Handler().postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
                 //Question suivante ou fin de jeu
@@ -171,15 +165,31 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Affichage de fin de jeu et retour vers SelectCategoryActivity
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
                 .setMessage(getString(R.string.score_content_label) + " " + mUser.getScore())
                 .setPositiveButton(getString(R.string.score_button_label), (dialog, which) -> {
-                    Intent SelectCategoryActivity = new Intent(GameActivity.this, SelectCategoryActivity.class);
-                    SelectCategoryActivity.putExtra(USER, mUser);
-                    setResult(RESULT_OK, SelectCategoryActivity);
-                    finish();
+                    TopQuizDBHelper db = new TopQuizDBHelper(this);
+                    try {
+                        db.getWritableDatabase();
+                        Category category = db.getCategoryByName(mCategory);
+                        Score maxScoreForThisUser = db.getScoreByUserEmailAndCategoryId(mUser.getUserEmail(), category.getId());
+                        if(mUser.getScore() > maxScoreForThisUser.getScore()){
+                            maxScoreForThisUser.setScore(mUser.getScore());
+                            db.updateScore(maxScoreForThisUser);
+                        }
+                        Intent SelectCategoryActivity = new Intent(GameActivity.this, SelectCategoryActivity.class);
+                        SelectCategoryActivity.putExtra(USER, mUser);
+                        setResult(RESULT_OK, SelectCategoryActivity);
+                        finish();
+                    } catch (Exception e){
+                        throw e;
+                    } finally {
+                        db.close();
+                    }
+
                 })
                 .create()
                 .show();
@@ -194,7 +204,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         db.getWritableDatabase();
-        db.createDefaultQuestionsIfNeeded();
+        db.getQuestionsForCategory(category).forEach(System.out::println); //TODO remove
         return new QuestionBank(db.getQuestionsForCategory(category));
     }
 }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
+import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.User;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             db.getWritableDatabase();
             db.createDefaultUsersIfNeeded();
             db.createDefaultCategoriesIfNeeded();
+            db.createDefaultQuestionsIfNeeded();
         } catch (Exception e){
             throw e;
         } finally {
@@ -91,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //On ajoute un listener sur le click du button
-        //TODO Check credentials before redirect !!!
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Appelée lorsqu'un clique est réalisé sur le button

@@ -105,9 +105,6 @@ public class Player implements Parcelable {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "mUserEmail='" + mUserEmail + '\'' +
-                ", mScore=" + mScore +
-                '}';
+        return mUserEmail + " : " + mScore + "pts";
     }
 }

@@ -33,13 +33,15 @@ public class ScoreScript {
     }
 
     /**
-     * Requete SQL qui permet de recuperer tous les scores d'une categorie
+     * Requete SQL qui permet de recuperer les 3  top scores d'une categorie
      * @param id : l'id de la categorie
      * @return la requete SQL
      */
     public static final String selectByCategoryIdQuery(long id){
-        return "SELECT  * FROM " + TABLE_NAME
-                + " WHERE " + COLUMN_SCORE_CATEGORYID + "=" + id;
+        return "SELECT * FROM " + TABLE_NAME
+                + " WHERE " + COLUMN_SCORE_CATEGORYID + "=" + id
+                + " ORDER BY " + COLUMN_SCORE_VALUE
+                + " LIMIT 3";
     }
 
     /**
