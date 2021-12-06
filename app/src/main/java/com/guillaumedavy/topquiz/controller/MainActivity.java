@@ -65,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
         //Create default user and admin
         TopQuizDBHelper db = new TopQuizDBHelper(this);
-        db.getWritableDatabase();
-        db.createDefaultUsersIfNeeded();
-        db.createDefaultCategoriesIfNeeded();
-
-        db.getAllUsers().forEach(System.out::println); //TODO Remove
+        try{
+            db.getWritableDatabase();
+            db.createDefaultUsersIfNeeded();
+            db.createDefaultCategoriesIfNeeded();
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
+        }
 
         //On ajoute un listener sur le TextEdit
         mEmailEditText.addTextChangedListener(new TextWatcher() {
@@ -98,24 +102,7 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                String email = mEmailEditText.getText().toString();
-                String password = mPasswordEditText.getText().toString();
-                try {
-                    //Essaye de se connecter
-                    db.tryLogIn(email, password);
-                    //Mémorise le nom et met le score par defaut
-                    mPlayer.setUserEmail(email);
-                    //Creer un Intent pour passer le joueur au game activity
-                    Intent gameActivity = new Intent(MainActivity.this, GameActivity.class);
-                    System.out.println(mPlayer);
-                    mPlayer.resetScore();
-                    gameActivity.putExtra(GameActivity.USER, mPlayer);
-                    Player user = gameActivity.getParcelableExtra(GameActivity.USER);
-                    System.out.println("Main " + user);
-                    startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
-                } catch (SQLException e){
-                    mErrorTextView.setText(e.getMessage());
-                }
+                loginAction(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
             }
         });
 
@@ -129,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -137,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             // Fetch the Email from CreateAccountActivity
             mEmailEditText.setText(data.getParcelableExtra(CreateAccountActivity.EMAIL));
         }
-
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Fetch the score from the Intent
             mPlayer = data.getParcelableExtra(GameActivity.USER);
@@ -164,6 +149,33 @@ public class MainActivity extends AppCompatActivity {
             mEmailEditText.setSelection(name.length());
             //Active le bouton Jouer
             mPlayButton.setEnabled(!name.isEmpty());
+        }
+    }
+
+    /**
+     * Action done when you click on login button
+     * @param email
+     * @param password
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void loginAction(String email, String password){
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        try {
+            db.getWritableDatabase();
+            //Essaye de se connecter
+            db.tryLogIn(email, password);
+            //Mémorise le nom et met le score par defaut
+            mPlayer.setUserEmail(email);
+            //Creer un Intent pour passer le joueur au select category activity
+            Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
+            System.out.println(mPlayer);
+            mPlayer.resetScore();
+            selectCategoryActivity.putExtra(GameActivity.USER, mPlayer);
+            startActivityForResult(selectCategoryActivity, GAME_ACTIVITY_REQUEST_CODE);
+        } catch (SQLException e){
+            mErrorTextView.setText(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 }
