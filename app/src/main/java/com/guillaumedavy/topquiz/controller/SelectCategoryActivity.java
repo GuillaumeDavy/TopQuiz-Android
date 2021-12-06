@@ -129,6 +129,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
                     Category category = db.getCategoryByName(itemSelected);
                     List<String> leaderboardList = db.getTop3ScoreByCategoryId(category.getId())
                             .stream()
+                            .filter(score -> score.getScore() != 0)
                             .map(score -> new Player(score.getUser().getUsername(), score.getScore()).toString())
                             .collect(Collectors.toList());
                     if(maybeUser.isPresent()){

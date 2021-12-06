@@ -1,7 +1,5 @@
 package com.guillaumedavy.topquiz.model.database_helper.utils;
 
-import com.guillaumedavy.topquiz.model.Score;
-
 public class ScoreScript {
     public static final String TABLE_NAME = "SCORE";
     public static final String COLUMN_SCORE_ID ="id";
@@ -40,7 +38,7 @@ public class ScoreScript {
     public static final String selectByCategoryIdQuery(long id){
         return "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + COLUMN_SCORE_CATEGORYID + "=" + id
-                + " ORDER BY " + COLUMN_SCORE_VALUE
+                + " ORDER BY " + COLUMN_SCORE_VALUE + " DESC"
                 + " LIMIT 3";
     }
 
