@@ -20,6 +20,7 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 public class AddQuestionActivity extends AppCompatActivity {
     public static final String CATEGORY = "CATEGORY";
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
+    private static final int ADD_QUESTION_REQUEST_CODE = 45;
 
     //view elements
     private TextView mChoosedCategory;
