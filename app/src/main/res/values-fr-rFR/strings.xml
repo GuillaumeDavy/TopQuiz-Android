@@ -38,4 +38,6 @@
     <string name="no_score_yet">Tu n\'as pas encore de meilleur score sur cette catégorie</string>
     <string name="your_best_score">Ton meilleur score est de : </string>
     <string name="points"> points</string>
+    <string name="select_a_category">Choisi une catégorie</string>
+    <string name="question">Question</string>
 </resources>

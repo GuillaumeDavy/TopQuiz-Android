@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <TextView
         android:id="@+id/textViewNewQuestion"
         android:layout_width="wrap_content"
@@ -19,6 +18,15 @@
         android:text="@string/add_question"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/textViewSelectCategory"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_category"
+        android:textSize="15sp" />
+
 
     <Spinner
         android:id="@+id/spinnerSelectCategoryAddQuestionView"
@@ -27,6 +35,15 @@
         android:layout_marginHorizontal="16dp"
         android:gravity="center"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/textViewQuestion"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/question"
+        android:textSize="15sp" />
 
     <EditText
         android:id="@+id/editTextNewQuestion"
@@ -45,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/answers"
-        android:textSize="24sp" />
+        android:textSize="15sp" />
 
     <EditText
         android:id="@+id/editTextNewAnswer1"
@@ -89,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="10dp"
-        android:textSize="24sp"
+        android:textSize="15sp"
         android:text="@string/choose_good_answer" />
 
     <Spinner

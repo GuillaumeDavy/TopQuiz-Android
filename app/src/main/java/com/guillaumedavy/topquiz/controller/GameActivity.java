@@ -153,6 +153,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }, 2000);
     }
 
+    /**
+     * Permet l'affichage d'une question dans la vue
+     * @param question
+     */
     private void displayQuestion(final Question question){
         mQuestionTextView.setText(question.getQuestion());
         mResponseOneButton.setText(question.getAnswer1());
@@ -202,8 +206,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private QuestionBank generateQuestionBank(Category category){
         //Database
         TopQuizDBHelper db = new TopQuizDBHelper(this);
-        db.getWritableDatabase();
-        db.getQuestionsForCategory(category).forEach(System.out::println); //TODO remove
         return new QuestionBank(db.getQuestionsForCategory(category));
     }
 }

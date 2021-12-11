@@ -131,7 +131,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent questionActivity = new Intent(SelectCategoryActivity.this, AddQuestionActivity.class);
-                    questionActivity.putExtra(CATEGORY, mSpinnerCategories.getSelectedItem().toString());//on lui donne la categorie choisie
                     startActivityForResult(questionActivity, ADD_QUESTION_REQUEST_CODE);
                 }
             });

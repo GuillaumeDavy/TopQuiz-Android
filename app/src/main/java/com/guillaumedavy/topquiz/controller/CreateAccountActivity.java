@@ -20,7 +20,7 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 import java.util.Objects;
 
-public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener{
+public class CreateAccountActivity extends AppCompatActivity{
     private static final String EMAIL = "EMAIL";
 
     // View elements
@@ -59,11 +59,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             @Override
             public void afterTextChanged(Editable s) {
             //Active le button si il y a du text dans le TextEdit
-                if(checkAccountPassword()){
-                    mButtonCreate.setEnabled(true);
-                }else{
-                    mButtonCreate.setEnabled(false);
-                }
+                mButtonCreate.setEnabled(checkAccountPassword());
             }
         });
 
@@ -76,11 +72,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(checkAccountPassword()){
-                    mButtonCreate.setEnabled(true);
-                }else{
-                    mButtonCreate.setEnabled(false);
-                }
+                mButtonCreate.setEnabled(checkAccountPassword());
             }
         });
         mPasswordConfirm.addTextChangedListener(new TextWatcher() {
@@ -93,11 +85,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             @Override
             public void afterTextChanged(Editable s) {
                 //Active le button si il y a du text dans le TextEdit
-                if(checkAccountPassword()){
-                    mButtonCreate.setEnabled(true);
-                }else{
-                    mButtonCreate.setEnabled(false);
-                }
+                mButtonCreate.setEnabled(checkAccountPassword());
             }
         });
         mButtonCreate.setOnClickListener(new View.OnClickListener() {
@@ -148,11 +136,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public boolean onOptionsItemSelected(MenuItem item){
         startActivityForResult(new Intent(getApplicationContext(), MainActivity.class), 0);
         return true;
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 
     /**

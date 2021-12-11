@@ -1,6 +1,7 @@
 package com.guillaumedavy.topquiz.controller;
 
 import android.content.Intent;
+import android.database.SQLException;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,26 +20,29 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.guillaumedavy.topquiz.App;
 import com.guillaumedavy.topquiz.R;
+import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Question;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 import com.guillaumedavy.topquiz.model.database_helper.utils.QuestionScript;
 
-public class AddQuestionActivity extends AppCompatActivity {
-    public static final String CATEGORY = "CATEGORY";
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+public class AddQuestionActivity extends AppCompatActivity{
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
 
     //view elements
-    private TextView mChoosedCategory;
     private EditText mNewQuestion;
+    private Spinner mCategoriesSpinner;
     private EditText mNewAnswer1;
     private EditText mNewAnswer2;
     private EditText mNewAnswer3;
     private EditText mNewAnswer4;
-    private Spinner mAnswerIndex;
+    private Spinner mAnswerIndexSpinner;
     private Button mInsertNewQuestion;
 
     //Field
-    private String mCategoryName;
     private int correctAnswerId;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -48,26 +52,23 @@ public class AddQuestionActivity extends AppCompatActivity {
         setContentView(R.layout.add_question);
 
         mNewQuestion = findViewById(R.id.editTextNewQuestion);
+        mCategoriesSpinner = findViewById(R.id.spinnerSelectCategoryAddQuestionView);
         mNewAnswer1 = findViewById(R.id.editTextNewAnswer1 );
         mNewAnswer2 = findViewById(R.id.editTextNewAnswer2 );
         mNewAnswer3 = findViewById(R.id.editTextNewAnswer3 );
         mNewAnswer4 = findViewById(R.id.editTextNewAnswer4 );
-        mAnswerIndex = findViewById(R.id.spinnerGoodAnswer);
+        mAnswerIndexSpinner = findViewById(R.id.spinnerGoodAnswer);
         mInsertNewQuestion = findViewById(R.id.buttonValidateNewQuestion);
         mInsertNewQuestion.setEnabled(false);
 
-        Intent intent = getIntent();
-        if(intent.hasExtra(CATEGORY)){
-            mCategoryName = intent.getStringExtra(CATEGORY);
-            mChoosedCategory.setText(mCategoryName);
-        }
+        //Retour a la home
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        //set spinner
-        String[] arrayAnswer = {getString(R.string.new_answer_1),getString(R.string.new_answer_2),getString(R.string.new_answer_3),getString(R.string.new_answer_4)};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, arrayAnswer);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mAnswerIndex.setAdapter(adapter);
+        //Set Spinner for category
+        setCategoriesSpinner();
+
+        //set spinner for correct answer
+        updateCorrectAnswerSpinner();
 
         mNewQuestion.addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,11 +80,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 //Active le button si il y a du text dans le TextEdit
-                if(checkDatas()){
-                    mInsertNewQuestion.setEnabled(true);
-                }else{
-                    mInsertNewQuestion.setEnabled(false);
-                }
+                mInsertNewQuestion.setEnabled(checkDatas());
             }
         });
 
@@ -96,12 +93,9 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateCorrectAnswerSpinner();
                 //Active le button si il y a du text dans le TextEdit
-                if(checkDatas()){
-                    mInsertNewQuestion.setEnabled(true);
-                }else{
-                    mInsertNewQuestion.setEnabled(false);
-                }
+                mInsertNewQuestion.setEnabled(checkDatas());
             }
         });
 
@@ -114,12 +108,9 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateCorrectAnswerSpinner();
                 //Active le button si il y a du text dans le TextEdit
-                if(checkDatas()){
-                    mInsertNewQuestion.setEnabled(true);
-                }else{
-                    mInsertNewQuestion.setEnabled(false);
-                }
+                mInsertNewQuestion.setEnabled(checkDatas());
             }
         });
 
@@ -132,12 +123,9 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateCorrectAnswerSpinner();
                 //Active le button si il y a du text dans le TextEdit
-                if(checkDatas()){
-                    mInsertNewQuestion.setEnabled(true);
-                }else{
-                    mInsertNewQuestion.setEnabled(false);
-                }
+                mInsertNewQuestion.setEnabled(checkDatas());
             }
         });
 
@@ -150,25 +138,20 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateCorrectAnswerSpinner();
                 //Active le button si il y a du text dans le TextEdit
-                if(checkDatas()){
-                    mInsertNewQuestion.setEnabled(true);
-                }else{
-                    mInsertNewQuestion.setEnabled(false);
-                }
+                mInsertNewQuestion.setEnabled(checkDatas());
             }
         });
 
-        mAnswerIndex.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mAnswerIndexSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 correctAnswerId = position;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         mInsertNewQuestion.setOnClickListener(new View.OnClickListener() {
@@ -186,6 +169,10 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Ajoute la question en base de donnée à partir des données presentes dans la vue.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void addQuestionInDB(){
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         try {
@@ -193,7 +180,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             long id = db.getMaxQuestionId();
             db.addQuestion(new Question(
                     ++id,
-                    db.getCategoryByName(mCategoryName),
+                    db.getCategoryByName(mCategoriesSpinner.getSelectedItem().toString()),
                     mNewQuestion.getText().toString(),
                     mNewAnswer1.getText().toString(),
                     mNewAnswer2.getText().toString(),
@@ -201,6 +188,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     mNewAnswer4.getText().toString(),
                     correctAnswerId
             ));
+            db.getAllQuestions().forEach(System.out::println);
         }catch (Exception e){
             throw e;
         }finally {
@@ -208,16 +196,58 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkDatas(){
-        if(mNewQuestion.getText().toString().isEmpty() ||
-            mNewAnswer1.getText().toString().isEmpty() ||
-            mNewAnswer2.getText().toString().isEmpty() ||
-            mNewAnswer3.getText().toString().isEmpty() ||
-            mNewAnswer4.getText().toString().isEmpty() ||
-            mAnswerIndex.getSelectedItem().toString().isEmpty()){
-            return false;
-        }else{
-            return true;
+    /**
+     * Met a jour le spinner de choix de bonne réponse avec
+     * les valeurs des réponses des TextFields de réponses.
+     */
+    private void updateCorrectAnswerSpinner(){
+        String[] arrayAnswer = {
+                mNewAnswer1.getText().toString(),
+                mNewAnswer2.getText().toString(),
+                mNewAnswer3.getText().toString(),
+                mNewAnswer4.getText().toString()
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, arrayAnswer);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mAnswerIndexSpinner.setAdapter(adapter);
+    }
+
+    /**
+     * Récupère les catégories en base de donnée et les mets
+     * dans le Spinner de choix de catégories
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void setCategoriesSpinner(){
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        try {
+            String[] allCategories = db.getAllCategories()
+                    .stream()
+                    .map(Category::getName)
+                    .toArray(String[]::new);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, allCategories);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mCategoriesSpinner.setAdapter(adapter);
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            db.close();
         }
+    }
+
+    /**
+     * Vérifie qu'il y a du contenu dans tous les TextFields
+     * @return true si pas vide
+     */
+    private boolean checkDatas(){
+        return !mNewQuestion.getText().toString().isEmpty() &&
+                !mNewAnswer1.getText().toString().isEmpty() &&
+                !mNewAnswer2.getText().toString().isEmpty() &&
+                !mNewAnswer3.getText().toString().isEmpty() &&
+                !mNewAnswer4.getText().toString().isEmpty() &&
+                !mAnswerIndexSpinner.getSelectedItem().toString().isEmpty();
     }
 }
