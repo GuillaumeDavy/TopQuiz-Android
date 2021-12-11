@@ -47,7 +47,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_question);
 
-        mChoosedCategory = findViewById(R.id.textViewChoosedCategory);
         mNewQuestion = findViewById(R.id.editTextNewQuestion);
         mNewAnswer1 = findViewById(R.id.editTextNewAnswer1 );
         mNewAnswer2 = findViewById(R.id.editTextNewAnswer2 );
