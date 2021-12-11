@@ -40,7 +40,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
     private Spinner mSpinnerCategories;
     private Button mButtonPlay;
     private Button mButtonQuestion;
-    private TextView mTextViewScoreMessage;
     private ListView mLeaderBoard;
     private TextView mTextViewLeaderboardEmpty;
     private TextView mTextViewLeaderboardTitle;
@@ -60,7 +59,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
         mLeaderBoard = findViewById(R.id.leaderboard_list_view); //Listview
         mButtonPlay = findViewById(R.id.buttonPlaySelectCategory);
         mButtonQuestion = findViewById(R.id.buttonAddQuestionSelectCategory);
-        mTextViewScoreMessage = findViewById(R.id.textview_ScoreMessage);
         mTextViewLeaderboardTitle = findViewById(R.id.leaderboard_text_view);
         mTextViewLeaderboardEmpty = findViewById(R.id.leaderboard_empty_text_view);
         mYourScoreTextView = findViewById(R.id.your_best_score_text_view);
@@ -170,18 +168,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
             }
         }
     }
-
-    /**
-     * Affiche le nom du joueur et son dernier score
-     * @param name : le nom du joueur
-     * @param score : son dernier score
-     */
-    private void displayNameAndScore(String name, int score){
-        if(name != null){
-            String text = getString(R.string.welcome_back_label_score) + " " + score;
-            mTextViewScoreMessage.setText(text);
-        }
-    }
+    
 
     /**
      * Met à jour le texte pour le meilleur score du joueur sur la catégorie choisie.
