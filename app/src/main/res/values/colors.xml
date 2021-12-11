@@ -10,7 +10,8 @@
     <color name="error_red">#FF0000</color>
     <color name="blue_pastel">#C1E3FE</color>
     <color name="yellow_pastel">#F1EECD</color>
-    <color name="pink_pastel">#FFD9E0</color>
+    <color name="pink_pastel">#ACA3CE</color>
     <color name="bg_color">#F6F5E7</color>
     <color name="button_bg">#C2AAA3</color>
+    <color name="second_bg">#E0BAA6</color>
 </resources>

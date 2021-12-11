@@ -8,7 +8,7 @@
     <string name="score_title_label">Bravo !</string>
     <string name="score_button_label">OK</string>
     <!-- ##################### - LOGIN - ############################# -->
-    <string name="welcome_label">Bienvenu dans TopQuiz. Connecte toi pour jouer !</string>
+    <string name="welcome_label">Bienvenue dans TopQuiz. Connecte toi pour jouer !</string>
     <string name="name_label">Email</string>
     <string name="password_label">Mot de passe</string>
     <string name="login">Se connecter</string>

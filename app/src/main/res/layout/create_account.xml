@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".controller.CreateAccountActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_color"
     android:orientation="vertical">
 
 
@@ -19,7 +17,8 @@
         android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="@string/username"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:autofillHints="name" />
 
     <EditText
         android:id="@+id/editTextEmailCreateAccount"
@@ -29,7 +28,8 @@
         android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="@string/email"
-        android:inputType="textPersonName" />
+        android:inputType="textEmailAddress"
+        android:autofillHints="emailAddress" />
 
     <EditText
         android:id="@+id/editTextPasswordCreateAccount"
@@ -39,7 +39,8 @@
         android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="@string/password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:autofillHints="password" />
 
     <EditText
         android:id="@+id/editTextConfirmPasswordCreateAccount"
@@ -48,7 +49,8 @@
         android:layout_marginHorizontal="15dp"
         android:ems="10"
         android:hint="@string/password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:autofillHints="password" />
 
     <TextView
         android:id="@+id/errorTextView"
@@ -63,7 +65,7 @@
 
     <Button
         android:id="@+id/buttonCreateAccount"
-        android:layout_width="178dp"
+        android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:backgroundTint="@color/button_bg"

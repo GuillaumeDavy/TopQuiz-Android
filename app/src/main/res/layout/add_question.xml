@@ -5,7 +5,6 @@
     tools:context=".controller.AddQuestionActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_color"
     android:orientation="vertical">
 
 
@@ -22,7 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="@string/add_question"
-            android:textSize="24dp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/textViewChoosedCategory"
@@ -31,7 +30,7 @@
             android:layout_marginStart="5dp"
             android:gravity="center_vertical"
             android:text="@string/choosed_category"
-            android:textSize="24dp" />
+            android:textSize="24sp" />
     </LinearLayout>
     <EditText
         android:id="@+id/editTextNewQuestion"
@@ -50,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/answers"
-        android:textSize="24dp" />
+        android:textSize="24sp" />
 
     <EditText
         android:id="@+id/editTextNewAnswer1"
@@ -94,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="10dp"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:text="@string/choose_good_answer" />
 
     <Spinner
@@ -111,5 +110,5 @@
         android:layout_marginHorizontal="16dp"
         android:backgroundTint="@color/button_bg"
         android:text="@string/validate_question"
-        android:textSize="24dp" />
+        android:textSize="24sp" />
 </LinearLayout>

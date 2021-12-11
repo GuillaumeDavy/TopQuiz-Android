@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controller.MainActivity"
-    android:background="@color/bg_color"
     android:orientation="vertical">
 
     <TextView
@@ -15,7 +14,7 @@
         android:layout_margin="16dp"
         android:padding="8dp"
         android:text="@string/welcome_label"
-        android:textSize="32dp" />
+        android:textSize="32sp" />
 
     <EditText
         android:id="@+id/main_edittext_email"
@@ -24,7 +23,8 @@
         android:ems="10"
         android:layout_marginHorizontal="15dp"
         android:hint="@string/name_label"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:autofillHints="emailAddress" />
 
     <EditText
         android:id="@+id/main_edittext_password"
@@ -33,7 +33,8 @@
         android:layout_margin="15dp"
         android:ems="10"
         android:hint="@string/password_label"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:autofillHints="password" />
 
     <TextView
         android:id="@+id/main_textview_error"
@@ -41,16 +42,17 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:textColor="@color/error_red"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:gravity="center"
         android:text="" />
 
     <Button
-        android:id="@+id/main_button_play"
-        android:layout_width="200dp"
+        android:id="@+id/main_button_login"
+        android:layout_width="300dp"
         android:layout_height="70dp"
         android:textSize="24sp"
         android:backgroundTint="@color/button_bg"
+        android:textColor="@color/white"
         android:layout_gravity="center_horizontal"
         android:layout_margin="0dp"
         android:text="@string/login" />
@@ -59,7 +61,7 @@
         android:id="@+id/create_account"
         android:layout_width="200dp"
         android:layout_height="30dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:gravity="center"
         android:layout_gravity="center"
         android:textColor="@color/error_red"
