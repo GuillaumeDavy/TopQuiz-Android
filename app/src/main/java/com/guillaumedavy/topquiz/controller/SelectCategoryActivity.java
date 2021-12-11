@@ -150,10 +150,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Récupère le score de l'Intent
             mPlayer = data.getParcelableExtra(GameActivity.PLAYER);
-            displayNameAndScore(
-                    mPlayer.getUserEmail(),
-                    mPlayer.getScore()
-            );
             //Met à Leaderboard et record personnel
             TopQuizDBHelper db = new TopQuizDBHelper(this);
             try {
@@ -168,7 +164,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
             }
         }
     }
-    
+
 
     /**
      * Met à jour le texte pour le meilleur score du joueur sur la catégorie choisie.
