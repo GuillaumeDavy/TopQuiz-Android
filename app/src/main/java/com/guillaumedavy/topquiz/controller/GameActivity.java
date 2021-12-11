@@ -25,7 +25,7 @@ import com.guillaumedavy.topquiz.model.Score;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
-    public static final String USER = "USER";
+    public static final String PLAYER = "PLAYER";
     public static final String CATEGORY = "CATEGORY";
     public static final int NUMBER_OF_QUESTIONS = 4;
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
@@ -43,7 +43,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private QuestionBank mQuestionBank;
     private int mRemainingQuestionCount;
     private boolean mEnableTouchEvents;
-    private Player mUser;
+    private Player mPlayer;
     private String mCategory;
 
     @Override
@@ -53,7 +53,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(BUNDLE_STATE_SCORE, mUser.getScore());
+        outState.putInt(BUNDLE_STATE_SCORE, mPlayer.getScore());
         outState.putInt(BUNDLE_STATE_QUESTION_COUNT, mRemainingQuestionCount);
         outState.putParcelable(BUNDLE_STATE_QUESTION_BANK, mQuestionBank);
         super.onSaveInstanceState(outState);
@@ -66,10 +66,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
 
         Intent intent = getIntent();
-        if(intent.hasExtra(USER) && intent.hasExtra(CATEGORY)){
-            mUser = intent.getParcelableExtra(USER);
+        if(intent.hasExtra(PLAYER) && intent.hasExtra(CATEGORY)){
+            mPlayer = intent.getParcelableExtra(PLAYER);
             mCategory = intent.getStringExtra(CATEGORY);
-            System.out.println("Game --> " + mUser + ", Category : " + mCategory);
         }
 
         TopQuizDBHelper db = new TopQuizDBHelper(this);
@@ -78,7 +77,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Category category = db.getCategoryByName(mCategory);
 
             if(savedInstanceState != null){
-                mUser.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
+                mPlayer.setScore(savedInstanceState.getInt(BUNDLE_STATE_SCORE));
                 mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION_COUNT);
                 mQuestionBank = savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
                 mQuestionBank.setNextQuestionIndex(NUMBER_OF_QUESTIONS - mRemainingQuestionCount);
@@ -129,7 +128,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(index == mQuestionBank.getCurrentQuestion().getAnswerIndex()){
             Toast.makeText(this, "Correct", Toast.LENGTH_SHORT).show();
             //Ajoute un point au score du joueur
-            mUser.incrementScoreByOne();
+            mPlayer.incrementScoreByOne();
         } else {
             Toast.makeText(this, "Incorrect", Toast.LENGTH_SHORT).show();
         }
@@ -169,19 +168,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void endGame(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.score_title_label))
-                .setMessage(getString(R.string.score_content_label) + " " + mUser.getScore())
+                .setMessage(getString(R.string.score_content_label) + " " + mPlayer.getScore())
                 .setPositiveButton(getString(R.string.score_button_label), (dialog, which) -> {
                     TopQuizDBHelper db = new TopQuizDBHelper(this);
                     try {
                         db.getWritableDatabase();
                         Category category = db.getCategoryByName(mCategory);
-                        Score maxScoreForThisUser = db.getScoreByUserEmailAndCategoryId(mUser.getUserEmail(), category.getId());
-                        if(mUser.getScore() > maxScoreForThisUser.getScore()){
-                            maxScoreForThisUser.setScore(mUser.getScore());
+                        Score maxScoreForThisUser = db.getScoreByUserEmailAndCategoryId(mPlayer.getUserEmail(), category.getId());
+                        if(mPlayer.getScore() > maxScoreForThisUser.getScore()){
+                            maxScoreForThisUser.setScore(mPlayer.getScore());
                             db.updateScore(maxScoreForThisUser);
                         }
                         Intent SelectCategoryActivity = new Intent(GameActivity.this, SelectCategoryActivity.class);
-                        SelectCategoryActivity.putExtra(USER, mUser);
+                        SelectCategoryActivity.putExtra(PLAYER, mPlayer);
                         setResult(RESULT_OK, SelectCategoryActivity);
                         finish();
                     } catch (Exception e){

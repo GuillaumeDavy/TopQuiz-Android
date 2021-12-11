@@ -33,7 +33,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
     private static final int ADD_QUESTION_REQUEST_CODE = 45;
-    public static final String USER = "USER";
+    public static final String PLAYER = "PLAYER";
     public static final String CATEGORY = "CATEGORY";
 
     // View elements
@@ -68,8 +68,8 @@ public class SelectCategoryActivity extends AppCompatActivity {
 
         //Récupère les donnees de l'utilisateur, email + score
         Intent intent = getIntent();
-        if(intent.hasExtra(USER)){
-            mPlayer = intent.getParcelableExtra(USER);
+        if(intent.hasExtra(PLAYER)){
+            mPlayer = intent.getParcelableExtra(PLAYER);
         }
 
         //N'affiche pas le bouton d'ajout de question si pas admin + recupère les catégories
@@ -90,7 +90,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
                     .collect(Collectors.toList());
 
             //On met les categories dans le Spinner
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mCategoryList.toArray(new String[0]));
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mCategoryList.toArray(new String[0]));
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mSpinnerCategories.setAdapter(adapter);
 
@@ -119,7 +119,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
                     Intent gameActivity = new Intent(SelectCategoryActivity.this, GameActivity.class);
 
                     gameActivity.putExtra(CATEGORY, mSpinnerCategories.getSelectedItem().toString());//on lui donne la categorie choisie
-                    gameActivity.putExtra(USER, mPlayer);//on lui donne le user
+                    gameActivity.putExtra(PLAYER, mPlayer);//on lui donne le player
                     startActivityForResult(gameActivity, GAME_ACTIVITY_REQUEST_CODE);
                 }
             });
@@ -148,10 +148,10 @@ public class SelectCategoryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //quand on revient de GameActivity
+        //Quand on revient de GameActivity
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Récupère le score de l'Intent
-            mPlayer = data.getParcelableExtra(GameActivity.USER);
+            mPlayer = data.getParcelableExtra(GameActivity.PLAYER);
             displayNameAndScore(
                     mPlayer.getUserEmail(),
                     mPlayer.getScore()
@@ -248,7 +248,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
         String[] leaderboardArray = new String[leaderboardList.size()];
         leaderboardList.toArray(leaderboardArray);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, leaderboardArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, leaderboardArray);
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
         mLeaderBoard.setAdapter(adapter);
     }

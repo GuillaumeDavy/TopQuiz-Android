@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
             System.out.println(mPlayer);
             mPlayer.resetScore();
-            selectCategoryActivity.putExtra(SelectCategoryActivity.USER, mPlayer);
+            selectCategoryActivity.putExtra(SelectCategoryActivity.PLAYER, mPlayer);
             startActivityForResult(selectCategoryActivity, SELECT_CATEGORY_REQUEST_CODE);
         } catch (SQLException e){
             mErrorTextView.setText(e.getMessage());
