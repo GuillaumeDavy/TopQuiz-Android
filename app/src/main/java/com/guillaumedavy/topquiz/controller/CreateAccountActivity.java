@@ -21,7 +21,7 @@ import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 import java.util.Objects;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener{
-    public static final String EMAIL = "EMAIL";
+    private static final String EMAIL = "EMAIL";
 
     // View elements
     private TextView mUsername;

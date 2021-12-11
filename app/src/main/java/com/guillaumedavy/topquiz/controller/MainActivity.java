@@ -23,12 +23,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
     private static final String PLAYER = "PLAYER";
+    private static final String EMAIL = "EMAIL";
 
     //Les élèments de la vue
     private TextView mGreetingTextView;
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
-    private Button mPlayButton;
+    private Button mLoginButton;
     private TextView mCreateAccount;
     private TextView mErrorTextView;
 
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         mEmailEditText = findViewById(R.id.main_edittext_email);
         mPasswordEditText = findViewById(R.id.main_edittext_password);
         mErrorTextView = findViewById(R.id.main_textview_error);
-        mPlayButton = findViewById(R.id.main_button_play);
-        mPlayButton.setEnabled(false); //Button désactivé
+        mLoginButton = findViewById(R.id.main_button_login);
+        mLoginButton.setEnabled(false); //Button désactivé
         mCreateAccount = findViewById(R.id.create_account);
 
         //Met les données de base dans la DB, Users, Catégories, et Questions pour la démo
@@ -68,12 +69,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 //Active le button si il y a du text dans le TextEdit
-                mPlayButton.setEnabled(!s.toString().isEmpty());
+                mLoginButton.setEnabled(!s.toString().isEmpty());
             }
         });
 
         //Listener sur le click du button
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginActionAndChangeActivity(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Rentre dans cette condition au retour de l'activity CreateAccount
         if(CREATE_ACCOUNT_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            mEmailEditText.setText(data.getParcelableExtra(CreateAccountActivity.EMAIL));
+            mEmailEditText.setText(data.getParcelableExtra(EMAIL));
         }
     }
 
