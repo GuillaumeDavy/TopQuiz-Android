@@ -16,10 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.guillaumedavy.topquiz.R;
-import com.guillaumedavy.topquiz.model.Category;
 import com.guillaumedavy.topquiz.model.Player;
-import com.guillaumedavy.topquiz.model.Score;
-import com.guillaumedavy.topquiz.model.User;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mPlayButton;
     private TextView mCreateAccount;
     private TextView mErrorTextView;
+
     //Attributs
     private Player mPlayer = new Player();
 
@@ -55,22 +53,11 @@ public class MainActivity extends AppCompatActivity {
         mPlayButton = findViewById(R.id.main_button_play);
         mPlayButton.setEnabled(false); //Button désactivé
         mCreateAccount = findViewById(R.id.create_account);
-        
 
-        //Create default user and admin
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try{
-            db.getWritableDatabase();
-            db.createDefaultUsersIfNeeded();
-            db.createDefaultCategoriesIfNeeded();
-            db.createDefaultQuestionsIfNeeded();
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
-        }
+        //Met les données de base dans la DB, Users, Catégories, et Questions pour la démo
+        putDefaultDataForDemoInDB(); // TODO remove if not démo
 
-        //On ajoute un listener sur le TextEdit
+        //Listener sur le TextEdit email
         mEmailEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -78,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            /**
-             * Methode appelée a chaque fois que le text change dans le TextEdit
-             * @param s
-             */
             @Override
             public void afterTextChanged(Editable s) {
                 //Active le button si il y a du text dans le TextEdit
@@ -89,12 +72,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //On ajoute un listener sur le click du button
+        //Listener sur le click du button
         mPlayButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Appelée lorsqu'un clique est réalisé sur le button
-             * @param v
-             */
             @Override
             public void onClick(View v) {
                 loginActionAndChangeActivity(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
@@ -121,11 +100,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /**
-     *
-     * @param email
-     * @param password
+     * Permet de vérifier le login, si c'est ok, passe à SelectCategoryActivity
+     * sinon affiche un message d'erreur
+     * @param email : l'email saisi dans le TextEdit
+     * @param password : le password saisi dans le TextEdit
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loginActionAndChangeActivity(String email, String password){
@@ -151,5 +130,23 @@ public class MainActivity extends AppCompatActivity {
         Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
         selectCategoryActivity.putExtra(PLAYER, mPlayer);
         startActivityForResult(selectCategoryActivity, SELECT_CATEGORY_REQUEST_CODE);
+    }
+
+    /**
+     * Met les données de base pour la démo en DB
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void putDefaultDataForDemoInDB(){
+        TopQuizDBHelper db = new TopQuizDBHelper(this);
+        try{
+            db.getWritableDatabase();
+            db.createDefaultUsersIfNeeded();
+            db.createDefaultCategoriesIfNeeded();
+            db.createDefaultQuestionsIfNeeded();
+        } catch (Exception e){
+            throw e;
+        } finally {
+            db.close();
+        }
     }
 }
