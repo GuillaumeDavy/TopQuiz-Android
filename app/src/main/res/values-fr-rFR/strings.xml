@@ -36,4 +36,6 @@
     <string name="leaderboard">Classement</string>
     <string name="no_leaderboard_yet">Il n\'y a pas encore de classement sur cette catégorie</string>
     <string name="no_score_yet">Tu n\'as pas encore de meilleur score sur cette catégorie</string>
+    <string name="your_best_score">Ton meilleur score est de : </string>
+    <string name="points"> points</string>
 </resources>

@@ -23,13 +23,9 @@ import com.guillaumedavy.topquiz.model.User;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
-    private static final String SHARED_PREF_USER_INFO = "SHARED_PREF_USER_INFO";
-    private static final String SHARED_PREF_USER_INFO_NAME = "SHARED_PREF_USER_INFO_NAME";
-    private static final String SHARED_PREF_USER_INFO_SCORE = "SHARED_PREF_USER_INFO_SCORE";
-    public static final String EMAIL = "EMAIL";
+    private static final String PLAYER = "PLAYER";
 
     //Les élèments de la vue
     private TextView mGreetingTextView;
@@ -92,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 mPlayButton.setEnabled(!s.toString().isEmpty());
             }
         });
+
         //On ajoute un listener sur le click du button
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -100,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                loginAction(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
+                loginActionAndChangeActivity(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
             }
         });
 
@@ -117,40 +114,42 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /*
-        * Rentre dans cette boucle au retour de l'activity CreateAccount
-        */
+
+        // Rentre dans cette condition au retour de l'activity CreateAccount
         if(CREATE_ACCOUNT_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            // Fetch the Email from CreateAccountActivity
             mEmailEditText.setText(data.getParcelableExtra(CreateAccountActivity.EMAIL));
         }
     }
 
 
     /**
-     * Action done when you click on login button
+     *
      * @param email
      * @param password
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void loginAction(String email, String password){
+    private void loginActionAndChangeActivity(String email, String password){
         TopQuizDBHelper db = new TopQuizDBHelper(this);
         try {
             db.getWritableDatabase();
-            //Essaye de se connecter
-            db.tryLogIn(email, password);
-            //Mémorise le nom et met le score par defaut
-            mPlayer.setUserEmail(email);
-            //Creer un Intent pour passer le joueur au select category activity
-            Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
-            System.out.println(mPlayer);
-            mPlayer.resetScore();
-            selectCategoryActivity.putExtra(SelectCategoryActivity.USER, mPlayer);
-            startActivityForResult(selectCategoryActivity, SELECT_CATEGORY_REQUEST_CODE);
+            db.tryLogIn(email, password); //Peut throw si password incorrect ou email incorrect
+            goToSelectCategoryActivity(email);
         } catch (SQLException e){
             mErrorTextView.setText(e.getMessage());
         } finally {
             db.close();
         }
+    }
+
+    /**
+     * Navigue vers l'activité de choix de categorie pour jouer.
+     * @param email email du champs de connexion
+     */
+    private void goToSelectCategoryActivity(String email){
+        mPlayer.setUserEmail(email);
+        mPlayer.resetScore();
+        Intent selectCategoryActivity = new Intent(MainActivity.this, SelectCategoryActivity.class);
+        selectCategoryActivity.putExtra(PLAYER, mPlayer);
+        startActivityForResult(selectCategoryActivity, SELECT_CATEGORY_REQUEST_CODE);
     }
 }
