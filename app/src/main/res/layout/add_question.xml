@@ -8,30 +8,26 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewNewQuestion"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="10dp"
         android:layout_marginHorizontal="16dp"
-        android:orientation="horizontal">
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:text="@string/add_question"
+        android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/textViewNewQuestion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="@string/add_question"
-            android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/textViewChoosedCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:gravity="center_vertical"
-            android:text="@string/choosed_category"
-            android:textSize="24sp" />
-    </LinearLayout>
+    <Spinner
+        android:id="@+id/spinnerSelectCategoryAddQuestionView"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"/>
+
     <EditText
         android:id="@+id/editTextNewQuestion"
         android:layout_width="match_parent"
