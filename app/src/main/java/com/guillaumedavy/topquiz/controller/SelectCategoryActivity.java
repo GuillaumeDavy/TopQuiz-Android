@@ -3,6 +3,7 @@ package com.guillaumedavy.topquiz.controller;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,7 +48,6 @@ public class SelectCategoryActivity extends AppCompatActivity {
 
     //Fields
     private Player mPlayer = new Player();
-    private List<String> mCategoryList = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -64,6 +64,9 @@ public class SelectCategoryActivity extends AppCompatActivity {
         mYourScoreTextView = findViewById(R.id.your_best_score_text_view);
         mYourScoreTextView.setText(getString(R.string.no_score_yet));
 
+        //Retour a la home
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         //Récupère les donnees de l'utilisateur, email + score
         Intent intent = getIntent();
         if(intent.hasExtra(PLAYER)){
@@ -71,24 +74,23 @@ public class SelectCategoryActivity extends AppCompatActivity {
         }
 
         //N'affiche pas le bouton d'ajout de question si pas admin + recupère les catégories
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             db.getWritableDatabase();
             Optional<User> maybeUser = db.getUserByEmail(mPlayer.getUserEmail());
 
             //Si le joueur n'est pas admin, on n'affiche pas le bouton de creation de question
-            if(maybeUser.isPresent() && !maybeUser.get().isAdmin()){
+            if (maybeUser.isPresent() && !maybeUser.get().isAdmin()) {
                 mButtonQuestion.setVisibility(View.GONE);
             }
 
-            //Conversion List<Category> vers List<String> en recuperant le nom de chaque category
-            mCategoryList = db.getAllCategories()
+            //Conversion List<Category> vers Array<String> en recuperant le nom de chaque category
+            String[] categoriesArray = db.getAllCategories()
                     .stream()
                     .map(Category::getName)
-                    .collect(Collectors.toList());
+                    .toArray(String[]::new);
 
             //On met les categories dans le Spinner
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mCategoryList.toArray(new String[0]));
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesArray);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mSpinnerCategories.setAdapter(adapter);
 
@@ -103,14 +105,15 @@ public class SelectCategoryActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
             });
 
             //Listener sur le bouton de jeu qui lance la GameActivity
             mButtonPlay.setOnClickListener(new View.OnClickListener() {
                 /**
                  * Appelée lorsqu'un clique est réalisé sur le button play
-                 * @param v
+                 * @param v : la view
                  */
                 @Override
                 public void onClick(View v) {
@@ -126,7 +129,7 @@ public class SelectCategoryActivity extends AppCompatActivity {
             mButtonQuestion.setOnClickListener(new View.OnClickListener() {
                 /**
                  * Appelée lorsqu'un clique est réalisé sur le button question
-                 * @param v
+                 * @param v : la view
                  */
                 @Override
                 public void onClick(View v) {
@@ -134,32 +137,33 @@ public class SelectCategoryActivity extends AppCompatActivity {
                     startActivityForResult(questionActivity, ADD_QUESTION_REQUEST_CODE);
                 }
             });
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
         }
+    }
+
+    /**
+     * Permet le retour à la page d'accueil
+     * @param item : le bouton retour
+     * @return true
+     */
+    public boolean onOptionsItemSelected(MenuItem item){
+        startActivityForResult(new Intent(getApplicationContext(), MainActivity.class), 0);
+        return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Quand on revient de GameActivity
         if(GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
             //Récupère le score de l'Intent
-            mPlayer = data.getParcelableExtra(GameActivity.PLAYER);
+            mPlayer = Objects.requireNonNull(data).getParcelableExtra(GameActivity.PLAYER);
             //Met à Leaderboard et record personnel
-            TopQuizDBHelper db = new TopQuizDBHelper(this);
-            try {
+            try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
                 Optional<User> maybeUser = db.getUserByEmail(mPlayer.getUserEmail());
                 String categorySelected = mSpinnerCategories.getSelectedItem().toString();
                 maybeUser.ifPresent(user -> updatePersonalBestScore(user, categorySelected));
                 updateLeaderboard(categorySelected);
-            } catch (Exception e){
-                throw e;
-            } finally {
-                db.close();
             }
         }
     }
@@ -169,43 +173,37 @@ public class SelectCategoryActivity extends AppCompatActivity {
      * Met à jour le texte pour le meilleur score du joueur sur la catégorie choisie.
      * s'il a un score différent de 0, il lui affiche son meilleur score,
      * sinon il affiche pas de score
-     * @param user
-     * @param categorySelected
+     * @param user : l'utilisateur connecté
+     * @param categorySelected : la category choisie
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void updatePersonalBestScore(User user, String categorySelected){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             Score myBestScore = db.getScoreByUserEmailAndCategoryId(user.getEmail(), db.getCategoryByName(categorySelected).getId());
-            if(myBestScore.getScore() != 0){
+            if (myBestScore.getScore() != 0) {
                 String text = getString(R.string.your_best_score) + " " + myBestScore.getScore() + " " + getString(R.string.points);
                 mYourScoreTextView.setText(text);
             } else {
                 mYourScoreTextView.setText(getString(R.string.no_score_yet));
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
         }
     }
 
     /**
      * Met à jour le leaderboard en affichant les 3 meilleurs joueurs de la categorie choisie
      * si le leaderboard est vide, il n'affiche qu'aucuns joueurs n'a joué.
-     * @param categorySelected
+     * @param categorySelected : la catégory selectionnée
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateLeaderboard(String categorySelected){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             List<String> leaderboardList = db.getTop3ScoreByCategoryId(db.getCategoryByName(categorySelected).getId())
                     .stream()
                     .filter(score -> score.getScore() != 0)
                     .map(score -> new Player(score.getUser().getUsername(), score.getScore()).toString())
                     .collect(Collectors.toList());
 
-            if(leaderboardList.isEmpty()){
+            if (leaderboardList.isEmpty()) {
                 mLeaderBoard.setVisibility(View.GONE);
                 mTextViewLeaderboardTitle.setVisibility(View.GONE);
                 mTextViewLeaderboardEmpty.setVisibility(View.VISIBLE);
@@ -215,16 +213,12 @@ public class SelectCategoryActivity extends AppCompatActivity {
                 mTextViewLeaderboardEmpty.setVisibility(View.GONE);
                 setItemsInLeaderboard(leaderboardList);
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
         }
     }
 
     /**
      * Ajoute les joueurs au classement
-     * @param leaderboardList
+     * @param leaderboardList : les 3 meilleurs de la catégory
      */
     private void setItemsInLeaderboard(List<String> leaderboardList){
         String[] leaderboardArray = new String[leaderboardList.size()];

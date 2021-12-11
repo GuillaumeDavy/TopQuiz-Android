@@ -91,18 +91,13 @@ public class CreateAccountActivity extends AppCompatActivity{
         mButtonCreate.setOnClickListener(new View.OnClickListener() {
             /**
              * Appelée lorsqu'un clique est réalisé sur le button de creation
-             * @param v
+             * @param v : la view
              */
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                Intent MainActivity = new Intent(CreateAccountActivity.this, MainActivity.class);
                 try {
                     createUserAndAddInDB();
-                    MainActivity.putExtra(EMAIL, mEmail.getText().toString());
-                    setResult(RESULT_OK, MainActivity);
-                    startActivity(MainActivity);
-                    finish();
                 } catch (SQLException e) {
                     mErrorTextView.setText(e.getMessage());
                 }
@@ -130,12 +125,23 @@ public class CreateAccountActivity extends AppCompatActivity{
 
     /**
      * Permet le retour à la page d'accueil
-     * @param item
+     * @param item : le bouton de retour
      * @return true
      */
     public boolean onOptionsItemSelected(MenuItem item){
         startActivityForResult(new Intent(getApplicationContext(), MainActivity.class), 0);
         return true;
+    }
+
+    /**
+     * Navigue vers l'activité de connexion.
+     */
+    private void goToMainActivity(){
+        Intent MainActivity = new Intent(CreateAccountActivity.this, MainActivity.class);
+        MainActivity.putExtra(EMAIL, mEmail.getText().toString());
+        setResult(RESULT_OK, MainActivity);
+        startActivity(MainActivity);
+        finish();
     }
 
     /**

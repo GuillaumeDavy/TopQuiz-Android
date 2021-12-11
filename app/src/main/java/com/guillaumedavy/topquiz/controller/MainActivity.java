@@ -19,6 +19,8 @@ import com.guillaumedavy.topquiz.R;
 import com.guillaumedavy.topquiz.model.Player;
 import com.guillaumedavy.topquiz.model.database_helper.TopQuizDBHelper;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
     private static final int CREATE_ACCOUNT_REQUEST_CODE = 43;
     private static final int SELECT_CATEGORY_REQUEST_CODE = 44;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Est appelée lorsque l'activité est créée
-     * @param savedInstanceState
+     * @param savedInstanceState : l'état sauvegardé
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -74,21 +76,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Listener sur le click du button
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginActionAndChangeActivity(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString());
-            }
-        });
+        mLoginButton.setOnClickListener(v -> loginActionAndChangeActivity(mEmailEditText.getText().toString(), mPasswordEditText.getText().toString()));
 
         // Listener sur le texte de création de compte
-        mCreateAccount.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent createAccountActivity = new Intent(MainActivity.this, CreateAccountActivity.class);
-                startActivityForResult(createAccountActivity, CREATE_ACCOUNT_REQUEST_CODE);
-            }
-        });
+        mCreateAccount.setOnClickListener(v -> goToCreateAccountActivity());
     }
 
     @Override
@@ -97,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Rentre dans cette condition au retour de l'activity CreateAccount
         if(CREATE_ACCOUNT_REQUEST_CODE == requestCode && RESULT_OK == resultCode){
-            mEmailEditText.setText(data.getParcelableExtra(EMAIL));
+            mEmailEditText.setText(Objects.requireNonNull(data).getParcelableExtra(EMAIL));
         }
     }
 
@@ -109,15 +100,12 @@ public class MainActivity extends AppCompatActivity {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loginActionAndChangeActivity(String email, String password){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             db.getWritableDatabase();
             db.tryLogIn(email, password); //Peut throw si password incorrect ou email incorrect
             goToSelectCategoryActivity(email);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             mErrorTextView.setText(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -134,20 +122,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Navigue vers l'activité de création de compte utilisateur.
+     */
+    private void goToCreateAccountActivity(){
+        Intent createAccountActivity = new Intent(MainActivity.this, CreateAccountActivity.class);
+        startActivityForResult(createAccountActivity, CREATE_ACCOUNT_REQUEST_CODE);
+    }
+
+    /**
      * Met les données de base pour la démo en DB
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void putDefaultDataForDemoInDB(){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try{
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             db.getWritableDatabase();
             db.createDefaultUsersIfNeeded();
             db.createDefaultCategoriesIfNeeded();
             db.createDefaultQuestionsIfNeeded();
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
         }
     }
 }

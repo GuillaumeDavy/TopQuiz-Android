@@ -82,5 +82,4 @@
         android:layout_marginHorizontal="15dp"
         android:text="@string/create_account_button"
         android:textSize="24sp" />
-
 </LinearLayout>

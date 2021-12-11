@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -61,7 +62,7 @@ public class AddQuestionActivity extends AppCompatActivity{
         mInsertNewQuestion = findViewById(R.id.buttonValidateNewQuestion);
         mInsertNewQuestion.setEnabled(false);
 
-        //Retour a la home
+        //Retour au choix de catégorie
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         //Set Spinner for category
@@ -157,7 +158,7 @@ public class AddQuestionActivity extends AppCompatActivity{
         mInsertNewQuestion.setOnClickListener(new View.OnClickListener() {
             /**
              * Appelée lorsqu'un clique est réalisé sur le button d'insertion de la question
-             * @param v
+             * @param v : la view
              */
             @Override
             public void onClick(View v) {
@@ -170,12 +171,21 @@ public class AddQuestionActivity extends AppCompatActivity{
     }
 
     /**
+     * Permet le retour à la page de choix de catégorie
+     * @param item : le bouton de retour a la home
+     * @return true
+     */
+    public boolean onOptionsItemSelected(MenuItem item){
+        startActivityForResult(new Intent(getApplicationContext(), SelectCategoryActivity.class), 0);
+        return true;
+    }
+
+    /**
      * Ajoute la question en base de donnée à partir des données presentes dans la vue.
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void addQuestionInDB(){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
             db.getWritableDatabase();
             long id = db.getMaxQuestionId();
             db.addQuestion(new Question(
@@ -189,10 +199,6 @@ public class AddQuestionActivity extends AppCompatActivity{
                     correctAnswerId
             ));
             db.getAllQuestions().forEach(System.out::println);
-        }catch (Exception e){
-            throw e;
-        }finally {
-            db.close();
         }
     }
 
@@ -220,21 +226,18 @@ public class AddQuestionActivity extends AppCompatActivity{
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setCategoriesSpinner(){
-        TopQuizDBHelper db = new TopQuizDBHelper(this);
-        try {
+        try (TopQuizDBHelper db = new TopQuizDBHelper(this)) {
+            //Conversion List<Category> vers Array<String> en recuperant le nom de chaque category
             String[] allCategories = db.getAllCategories()
                     .stream()
                     .map(Category::getName)
                     .toArray(String[]::new);
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, allCategories);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mCategoriesSpinner.setAdapter(adapter);
 
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            db.close();
         }
     }
 
