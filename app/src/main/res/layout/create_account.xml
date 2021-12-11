@@ -6,6 +6,7 @@
     tools:context=".controller.CreateAccountActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_color"
     android:orientation="vertical">
 
 
@@ -53,9 +54,10 @@
         android:id="@+id/errorTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="16dp"
         android:textColor="@color/error_red"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:gravity="center"
         android:text="" />
 
@@ -64,8 +66,9 @@
         android:layout_width="178dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
+        android:backgroundTint="@color/button_bg"
         android:layout_marginHorizontal="15dp"
         android:text="@string/create_account_button"
-        android:textSize="24dp" />
+        android:textSize="24sp" />
 
 </LinearLayout>

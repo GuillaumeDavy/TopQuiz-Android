@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controller.MainActivity"
+    android:background="@color/bg_color"
     android:orientation="vertical">
 
     <TextView
@@ -48,6 +49,8 @@
         android:id="@+id/main_button_play"
         android:layout_width="200dp"
         android:layout_height="70dp"
+        android:textSize="24sp"
+        android:backgroundTint="@color/button_bg"
         android:layout_gravity="center_horizontal"
         android:layout_margin="0dp"
         android:text="@string/login" />
@@ -59,6 +62,7 @@
         android:textSize="16dp"
         android:gravity="center"
         android:layout_gravity="center"
+        android:textColor="@color/error_red"
         android:text="@string/create_account" />
 
 </LinearLayout>

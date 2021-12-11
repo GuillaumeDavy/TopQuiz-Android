@@ -5,6 +5,7 @@
     tools:context=".controller.SelectCategoryActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_color"
     android:orientation="vertical">
     <TextView
         android:id="@+id/textViewSelectCategory"
@@ -15,14 +16,6 @@
         android:text="@string/select_category"
         android:textSize="25sp">
     </TextView>
-
-    <TextView
-        android:id="@+id/textview_ScoreMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text=""
-        android:textSize="25sp" />
 
     <Spinner
         android:id="@+id/spinnerSelectCategory"
@@ -61,6 +54,8 @@
     <ListView
         android:id="@+id/leaderboard_list_view"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="10dp"
         android:layout_height="192dp" />
 
     <Button
@@ -68,6 +63,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/button_bg"
         android:gravity="center"
         android:text="@string/lets_play"
         android:textSize="25sp"></Button>
@@ -76,6 +73,7 @@
         android:id="@+id/buttonAddQuestionSelectCategory"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="16dp"
+        android:backgroundTint="@color/button_bg"
         android:layout_height="wrap_content"
         android:text="@string/add_question"
         android:textSize="20sp"/>

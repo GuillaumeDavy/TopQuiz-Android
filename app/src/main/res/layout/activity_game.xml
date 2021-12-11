@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".controller.GameActivity"
     android:orientation="vertical"
+    android:background="@color/bg_color"
     android:padding="8dp">
 
     <ProgressBar
@@ -20,11 +21,11 @@
         android:layout_height="wrap_content"
         android:minHeight="150dp"
         android:layout_margin="16dp"
-        android:background="@color/teal_700"
+        android:background="@drawable/rounded_corner"
         android:padding="8dp"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         android:textStyle="bold"
         tools:text="Question?"
         />
@@ -34,9 +35,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="60dp"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/blue_pastel"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Answer1"
         />
 
@@ -44,10 +47,12 @@
         android:id="@+id/game_activity_button_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue_pastel"
+        android:textColor="@color/black"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
         android:minHeight="60dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Answer2"
         />
 
@@ -57,8 +62,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="16dp"
+        android:backgroundTint="@color/blue_pastel"
+        android:textColor="@color/black"
         android:minHeight="60dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Answer3"
         />
 
@@ -67,9 +74,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/blue_pastel"
+        android:textColor="@color/black"
         android:layout_marginHorizontal="16dp"
         android:minHeight="60dp"
-        android:textSize="16dp"
+        android:textSize="16sp"
         tools:text="Answer4"
         />
 
