@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             db.createDefaultUsersIfNeeded();
             db.createDefaultCategoriesIfNeeded();
             db.createDefaultQuestionsIfNeeded();
+            db.createDefaultScoreForDemo();
         }
     }
 }

@@ -27,7 +27,7 @@ import java.util.Optional;
 
 public class TopQuizDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 23;
     private static final String DATABASE_NAME = "TOPQUIZ_DATABASE";
 
 
@@ -61,8 +61,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @param question : Objet Question
      */
     public void addQuestion(Question question) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        try{
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(QuestionScript.COLUMN_QUESTION_VALUE, question.getQuestion());
             values.put(QuestionScript.COLUMN_QUESTION_CATEGORY_ID, question.getCategory().getId());
@@ -74,11 +73,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
 
             // Inserting Row
             db.insert(QuestionScript.TABLE_NAME, null, values);
-        } catch (Exception e){
-            throw e;
-        } finally {
-            // Closing database connection
-            db.close();
         }
     }
 
@@ -89,8 +83,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<Question> getAllQuestions() {
         List<Question> questionList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(QuestionScript.selectAllQuery(), null);
-        try {
+        try (Cursor cursor = db.rawQuery(QuestionScript.selectAllQuery(), null)) {
             if (cursor.moveToFirst()) {
                 do {
                     Question question = new Question(
@@ -106,10 +99,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                     questionList.add(question);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
         return questionList;
     }
@@ -122,8 +111,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<Question> getQuestionsForCategory(Category category){
         List<Question> questionList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(QuestionScript.selectAllQuestionForCategoryId(category.getId()), null);
-        try {
+        try (Cursor cursor = db.rawQuery(QuestionScript.selectAllQuestionForCategoryId(category.getId()), null)) {
             if (cursor.moveToFirst()) {
                 do {
                     Question question = new Question(
@@ -139,10 +127,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                     questionList.add(question);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
         return questionList;
     }
@@ -154,8 +138,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(UserScript.selectAllQuery(), null);
-        try{
+        try (Cursor cursor = db.rawQuery(UserScript.selectAllQuery(), null)) {
             if (cursor.moveToFirst()) {
                 do {
                     User user = new User(
@@ -167,10 +150,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                     userList.add(user);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
         return userList;
     }
@@ -235,8 +214,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
 
             // Inserting Row
             db.insert(UserScript.TABLE_NAME, null, values);
-        } catch (Exception e){
-            throw e;
         } finally {
             // Closing database connection
             db.close();
@@ -248,17 +225,12 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @param category : Objet Category
      */
     public void addCategory(Category category) {
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        try{
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(CategorieScript.COLUMN_CATEGORIE_NAME, category.getName());
 
             db.insert(CategorieScript.TABLE_NAME, null, values);
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            db.close();
         }
     }
 
@@ -269,8 +241,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<Category> getAllCategories() {
         List<Category> categoryList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(CategorieScript.selectAllQuery(), null);
-        try{
+        try (Cursor cursor = db.rawQuery(CategorieScript.selectAllQuery(), null)) {
             if (cursor.moveToFirst()) {
                 do {
                     Category category = new Category(
@@ -281,10 +252,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                     categoryList.add(category);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
 
         return categoryList;
@@ -337,19 +304,14 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
      * @param score : Objet Score
      */
     private void addScore(Score score) {
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        try{
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(ScoreScript.COLUMN_SCORE_USER_EMAIL, score.getUser().getEmail());
             values.put(ScoreScript.COLUMN_SCORE_CATEGORYID, score.getCategory().getId());
             values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
 
             db.insert(ScoreScript.TABLE_NAME, null, values);
-        } catch (Exception e){
-            throw e;
-        } finally {
-            db.close();
         }
     }
 
@@ -368,8 +330,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
             values.put(ScoreScript.COLUMN_SCORE_VALUE, score.getScore());
             rowUpdated = db.update(ScoreScript.TABLE_NAME, values, ScoreScript.COLUMN_SCORE_ID + " = ?",
                     new String[]{String.valueOf(score.getId())});
-        } catch (Exception e){
-            throw e;
         } finally {
             db.close();
         }
@@ -384,9 +344,8 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<Score> getAllScores() {
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(ScoreScript.selectAllQuery(), null);
 
-        try {
+        try (Cursor cursor = db.rawQuery(ScoreScript.selectAllQuery(), null)) {
             if (cursor.moveToFirst()) {
                 do {
                     this.getUserByEmail(cursor.getString(1))
@@ -398,10 +357,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                             )).ifPresent(scoreList::add);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
         return scoreList;
     }
@@ -428,8 +383,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                             )).ifPresent(scoreList::add);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
         } finally {
             cursor.close();
         }
@@ -445,9 +398,8 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     public List<Score> getTop3ScoreByCategoryId(long id){
         List<Score> scoreList = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(ScoreScript.selectByCategoryIdQuery(id), null);
-        try{
-            if(cursor.moveToFirst()){
+        try (Cursor cursor = db.rawQuery(ScoreScript.selectByCategoryIdQuery(id), null)) {
+            if (cursor.moveToFirst()) {
                 do {
                     this.getUserByEmail(cursor.getString(1))
                             .map(user -> new Score(
@@ -458,10 +410,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                             )).ifPresent(scoreList::add);
                 } while (cursor.moveToNext());
             }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            cursor.close();
         }
         return scoreList;
     }
@@ -509,6 +457,7 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     /**
      * Create default Categories
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void createDefaultCategoriesIfNeeded(){
         if(this.getCategoriesCount() == 0){
             this.addCategory(new Category(1, App.getContext().getResources().getString(R.string.categorie1)));
@@ -753,8 +702,25 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void createDefaultUsersIfNeeded(){
         if(this.getUserCount() == 0){
-            this.addUser(new User("admin@email.fr","admin", "admin", true));
-            this.addUser(new User("user@email.fr","user", "user", false));
+            this.addUser(new User("admin@email.fr","Admin", "admin", true));
+            this.addUser(new User("matthias@email.fr","Matthias", "matthias", false));
+            this.addUser(new User("alexandre@email.fr","Alexandre", "alexandre", false));
+            this.addUser(new User("guillaume@email.fr","Guillaume", "guillaume", false));
+        }
+    }
+
+    //TODO remove if not demo
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void createDefaultScoreForDemo(){
+        if(this.getAllScores().size() == 0){
+            User matthias = getUserByEmail("matthias@email.fr").get();
+            User alexandre = getUserByEmail("alexandre@email.fr").get();
+            User guillaume = getUserByEmail("guillaume@email.fr").get();
+            Category sport = getCategoryById(2);
+            System.out.println("hello " + sport);
+            this.addScore(new Score(0, matthias, sport, 4));
+            this.addScore(new Score(1, alexandre, sport, 3));
+            this.addScore(new Score(2, guillaume, sport, 1));
         }
     }
 
