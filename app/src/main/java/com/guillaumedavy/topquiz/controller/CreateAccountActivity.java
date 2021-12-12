@@ -151,9 +151,11 @@ public class CreateAccountActivity extends AppCompatActivity{
      */
     private boolean checkAccountPassword(){
         return mEmail.getText().toString().contains("@")
-                && mPassword.getText().toString().equals(mPasswordConfirm.getText().toString())
                 && mPassword != null
-                && mPasswordConfirm != null;
+                && mPasswordConfirm != null
+                && !mPassword.getText().toString().trim().isEmpty()
+                && !mPasswordConfirm.getText().toString().trim().isEmpty()
+                && mPassword.getText().toString().trim().equals(mPasswordConfirm.getText().toString().trim());
     }
 
     /**
