@@ -26,5 +26,9 @@ Pour tester un compte administrateur au sein de l'application, vous avez ce comp
 
 | Title | #Accueil | #Create account |
 | :---: | :---: | :---: |
-| Image | ![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/Accueil.png) | 283 |
+| Image | ![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/Accueil.png) | ![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/CreateAcount.png) |
+
+| Title | #Select Category admin | #Select Category user|
+| :---: | :---: | :---: |
+| Image | ![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/SelectCategoryAdmin.png) | ![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/SelectCategoryUser.png) |
 
