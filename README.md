@@ -24,5 +24,5 @@ Pour tester un compte administrateur au sein de l'application, vous avez ce comp
 - [@AlexandreJoudioux](https://www.github.com/Vitrox77)
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Accueil](https://github.com/GuillaumeDavy/TopQuiz-Android/blob/main/screenshot/Accueil.png)
 
