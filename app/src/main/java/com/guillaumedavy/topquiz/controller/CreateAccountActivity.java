@@ -98,6 +98,7 @@ public class CreateAccountActivity extends AppCompatActivity{
             public void onClick(View v) {
                 try {
                     createUserAndAddInDB();
+                    goToMainActivity();
                 } catch (SQLException e) {
                     mErrorTextView.setText(e.getMessage());
                 }

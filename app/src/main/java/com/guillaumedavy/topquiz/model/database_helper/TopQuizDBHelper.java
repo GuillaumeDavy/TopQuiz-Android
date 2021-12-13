@@ -253,7 +253,6 @@ public class TopQuizDBHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         }
-
         return categoryList;
     }
 
